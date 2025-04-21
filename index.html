@@ -303,7 +303,7 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="title">Our Memory Since <u>27/2</u><br>We Have Been Together For <span id="daysCounter"><u>${dateAmount}</u></span> And Counting</h1>
+        <h1 class="title">Our Memory <br>Today is <span id="todayDate"></span> <br> We've Shared <span id="daysCounter"><u>${dateAmount}</u></span> Beautiful Days Together</h1>
 
         <!-- Left side pictures -->
         <div class="side-pictures left">
@@ -331,13 +331,13 @@
             </div>
         </div>
 
-        <h1 class="title">I Want To Stay With You Forever <br> I Want To Make More Memory With You</h1>
+        <h1 class="title">Let Make More Memory Together</h1>
 
     </div>
 
     <div class="music-controls">
         <button id="playMusic">♫</button>
-        <button id="muteMusic">🔇</button>
+        <!-- <button id="muteMusic">🔇</button> -->
     </div>
 
     <audio id="bgMusic" allow="autoplay" loop>
@@ -364,74 +364,114 @@
         const dateAmount = daysSince("2025-02-27");
 
         document.addEventListener('DOMContentLoaded', function() {
-        const dateAmount = daysSince("2025-02-27");
-        document.getElementById('daysCounter').textContent = dateAmount + " Days";
-        
-        // Update the title in the document
-        // document.title = `Our Memory - ${dateAmount} Days Together`;
-    });
+            const todayDate = new Date().toLocaleDateString('en-GB', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric' 
+            });            
+            document.getElementById('todayDate').innerHTML = `<span style="text-decoration: underline;">${todayDate}</span>`;
+
+            const dateAmount = daysSince("2025-02-27");
+            document.getElementById('daysCounter').innerHTML = `<span style="text-decoration: underline;">${dateAmount}</span>`;
+            
+            const bgMusic = document.getElementById('bgMusic');
+    
+            bgMusic.volume = 0.3;
+    
+            // Function to attempt playing music
+            const attemptPlayMusic = function() {
+                // bgMusic.play().catch(error => {
+                //     console.log("Still waiting for interaction: ", error);
+                //     // We'll try again on the next user interaction
+                // });
+            };
+            
+            // Try to play on various user interactions
+            const userInteractions = ['click', 'touchstart', 'keydown', 'scroll', 'mousemove'];
+            
+            userInteractions.forEach(event => {
+                document.addEventListener(event, function interactionHandler() {
+                    //attemptPlayMusic();
+                    
+                    // If successful play occurs on any event, we can remove all listeners
+                    bgMusic.addEventListener('playing', function() {
+                        userInteractions.forEach(evt => {
+                            document.removeEventListener(evt, interactionHandler);
+                        });
+                        console.log("Music started successfully!");
+                    });
+                }, { once: false }); // May need multiple attempts
+            });
+            
+            // Also try when page becomes visible
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'visible') {
+                    attemptPlayMusic();
+                }
+            });
+        });
 
         // Card data
         const cardData = [
             { 
                 image: "./assets/img/unnamed (6).jpg", 
-                date: "27-2",
-                message: "27-2 Our first message on Tinder) From the moment I first saw you, I knew you were special. Your smile lights up even my darkest days, and your laugh is the soundtrack to my happiness." 
+                date: "27/2",
+                message: "<b>Tin nhắn đầu tiên trên Tinder.</b> Vào lúc đó a muốn tìm một người để nói chuyện và gửi meme cho nhau. A không nghĩ rằng mình sẽ tìm thấy một người sẽ thay đổi cuộc sống của a." 
             },
             { 
                 image: "./assets/img/unnamed3.jpg", 
-                date: "6-3",
-                message: "(6-3 Our first discord movie night) what movie ? Every morning I wake up thankful that you're in my life. You've shown me what it means to truly love and be loved in return." 
+                date: "6/3",
+                message: "<b>Buổi tối xem phim đầu tiên trên Discord.</b> Chúng ta đã cùng xem The Gorge. A đã hơi thất vọng vì muốn nghe giọng của e. Nhưng a vẫn khá thích buổi tối đó vì cùng xem phim vs e. " 
             },
             { 
                 image: "./assets/img/Screenshot 2025-04-21 113734.png", 
-                date: "19-3",
-                message: "(19-3 Our first date) Our love story is my favorite story. Every chapter with you is better than the last, and I can't wait to see what comes next." 
+                date: "19/3",
+                message: "<b>Buổi hẹn đầu tiên.</b> E làm a hơi ngạc nhiên nên a đã hơi lo lắng về vẻ ngoài của mình. Nhưng khi nhìn thấy e, a đã quên hết mọi thứ xung quanh. E thật sự rất xinh đẹp và dễ thương. A đã rất vui khi được gặp e" 
             },
             { 
                 image: "./assets/img/unnamed (8).jpg", 
-                date: "22-3",
-                message: "(22-3 Our second date Our first hand holding) movie interstella You make ordinary moments extraordinary just by being you. Thank you for bringing so much joy into my life." 
+                date: "22/3",
+                message: "<b>Lần nắm tay đầu tiên.</b> A đã rất muốn nắm tay e tối hôm đó nhưng hơi ngại. Nhưng a đã quyết định nắm lấy cơ hội và nắm tay e trong lúc xem phim. Cảm giác tay e thật ấm áp và mềm mại." 
             },
             { 
                 image: "./assets/img/unnamed2.jpg", 
-                date: "23-3",
-                message: "(23-3 second discord movie night) what movie ? I love the way you look at me as if I'm the only person in the world. It makes me feel so special and cherished." 
+                date: "23/3",
+                message: "Chúng ta cùng ngồi xem phim <b>Ride Your Wave</b>. Cả bộ phim a chỉ nghĩ về e và muốn ngồi cạnh e và nắm tay e. " 
             },
             { 
                 image: "./assets/img/vn-11134207-7qukw-lhy4tzuozh6pc2.jfif", 
-                date: "25-3",
-                message: "(25-3 our third date) Your kindness and compassion inspire me every day. You make me want to be the best version of myself." 
+                date: "25/3",
+                message: "<b>Món quà đầu tiên.</b> A muốn mua tặng e một món quà, một chỗ e có thể xả những nối buồn mà e chưa thể kể với a. Và a đã tìm thấy món quà hoàn hảo đó là một cuốn sách tô màu. " 
             },
             { 
                 image: "./assets/img/unnamed (7).jpg", 
                 date: "27/3",
-                message: "(27/3 our fourth date) When I'm with you, I feel like I'm home. You're my safe place, my comfort, and my greatest adventure all at once." 
+                message: "<b>Lần đầu tiên a đi pub</b>. A đã hơi lo lắng vì không biết thực đơn có gì. A thực sự thấy rất vui khi được ngồi cùng e và nói những mẩu chuyện nhỏ nhặt. A đã rất vui khi được nhìn thấy e cười và vui vẻ." 
             },
             { 
                 image: "./assets/img/1200wx1800h_1661793911854.jpg", 
                 date: "29/3",
-                message: "(29/3 our 5 date) I love your strength, your vulnerability, and everything in between. You are perfectly imperfect in all the ways that matter." 
+                message: "Chúng ta đi triển lãm Thái Lan và xem phim ở ngoài trời. Hôm đó khá lạnh và <b>e đã tựa đầu vào vai a</b> khi xem phim. Thật sự tim a đã rất giao động lúc đó. Khoảng khắc đó dường như bộ phim ko còn quan trọng nữa mà chỉ có e và a." 
             },
             { 
                 image: "./assets/img/unnamed (5).jpg", 
                 date: "1/4",
-                message: "(1/4 our 6 date) The way you understand me without words amazes me. It's like you can read my soul, and somehow you still choose to love me." 
+                message: "A biết e sắp đi Nha Trang và a cũng hơi lo lắng và đã quyết định mua bó hoa e thích để khi e về <b>bó hoa có thể thay a đón chào e về nhà.</b>" 
             },
             { 
                 image: "./assets/img/Screenshot 2025-04-21 115114.png",
                 date: "3/4", 
-                message: "(3/4) You've taught me that love isn't just a feeling - it's a choice we make every day. And I choose you, today and always." 
+                message: "Sáng hôm đó e bay vào Nha Trang và a muốn được đưa e đi ra sân bay nhưng không được nhưng a vẫn <b>muốn gặp e trước khi e đi</b> nên a đã dậy sớm và đến bên e trước khi e đi <b>vì muốn làm e bất ngờ.</b>" 
             },
             { 
                 image: "./assets/img/unnamed (9).jpg", 
                 date: "4/4",
-                message: "(4/4) I love our quiet moments together just as much as our adventures. With you, simply existing side by side feels like magic." 
+                message: "A nghĩ e sẽ mệt nhưng e vẫn đồng ý đi chơi với a. A đã rất vui khi được gặp e, a <b>muốn làm e đỡ mệt</b>. A đã rất vui khi được nhìn thấy e cười và vui vẻ. Tối hôm đó cũng là lần đầu tiên a <b>public mối quan hệ của a với e.</b> " 
             },
             { 
                 image: "./assets/img/6d4ad05d-9cb1-43a6-82ee-ecfbc46761b1.jfif", 
                 date: "5/4",
-                message: "(5/4) Your touch still gives me butterflies, even after all this time. Some things never fade, and my love for you only grows stronger." 
+                message: "<b>Lần đầu tiên a thấy e say</b>. A cảm nhận được lúc đó <b>e cảm thấy đủ an toàn khi ở bên cạnh a để thể hiện ra sự hồn nhiên của mình.</b>" 
             },
             { 
                 image: "./assets/img/unnamed (10).jpg", 
@@ -573,7 +613,7 @@
             // Try to play music automatically
             const bgMusic = document.getElementById('bgMusic');
             bgMusic.volume = 0.3;
-            const playPromise = bgMusic.play();
+            //const playPromise = bgMusic.play();
             
             if (playPromise !== undefined) {
                 playPromise.catch(error => {
@@ -595,18 +635,19 @@
         // Music controls
         document.getElementById('playMusic').addEventListener('click', () => {
             const bgMusic = document.getElementById('bgMusic');
-            bgMusic.play();
-            bgMusic.volume = 0.3;
-        });
-
-        document.getElementById('muteMusic').addEventListener('click', () => {
-            const bgMusic = document.getElementById('bgMusic');
+            // bgMusic.play();
+            // bgMusic.volume = 0.3;
             if (bgMusic.muted) {
-                bgMusic.muted = false;
+               bgMusic.muted = false;
             } else {
-                bgMusic.muted = true;
+               bgMusic.muted = true;
             }
         });
+
+        //document.getElementById('muteMusic').addEventListener('click', () => {
+        //    const bgMusic = document.getElementById('bgMusic');
+
+        //});
         
         // Add interaction to side pictures
         const pictures = document.querySelectorAll('.picture-frame');
