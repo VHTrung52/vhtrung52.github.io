@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Memory</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%23d81b60%22>❤</text></svg>">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #ffd1dc; /* Pink pastel background */
+            font-family: 'Arial', sans-serif;
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            padding-bottom: 80px; /* Space at the bottom */
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .heart {
+            position: fixed; /* Changed from absolute to fixed */
+            color: #ff6b81;
+            font-size: 24px;
+            animation: fall 4s linear forwards;
+            z-index: 1;
+            pointer-events: none; /* Ensures hearts don't interfere with clicks */
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .title {
+            color: #d81b60;
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 40px;
+            font-size: 36px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            position: relative;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 30px; /* Increased spacing between cards */
+            max-width: 1010px;
+            margin: 0 auto;
+        }
+
+        .card {
+            width: 180px;
+            height: 250px; /* Changed from square to rectangle */
+            perspective: 1000px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-front {
+            background-color: #f8bbd0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .card-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            background-color: #f48fb1;
+            padding: 15px;
+            overflow-y: auto;
+            color: #4a0012;
+            font-size: 14px;
+            line-height: 1.4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .card-header {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #4a0012;
+        }
+
+        .card-divider {
+            width: 80%;
+            height: 2px;
+            background-color: #e91e63;
+            margin-bottom: 10px;
+        }
+
+        .card-message {
+            flex: 1;
+            overflow-y: auto;
+            width: 100%;
+            padding: 5px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-back::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .card-back::-webkit-scrollbar-thumb {
+            background: #e91e63;
+            border-radius: 10px;
+        }
+
+        /* Initial heart rain animation */
+        @keyframes initialHeartRain {
+            0% {
+                transform: translateY(-100vh) translateX(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) translateX(20px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .initial-heart {
+            position: fixed; /* Changed from absolute to fixed */
+            color: #ff6b81;
+            font-size: 24px;
+            animation: initialHeartRain 4s linear forwards;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .music-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+        }
+
+        .music-controls button {
+            background-color: #f06292;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .music-controls button:hover {
+            background-color: #e91e63;
+        }
+        
+        /* Picture frames on sides */
+        .side-pictures {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        
+        @media (max-width: 1400px) {
+            .side-pictures {
+                position: static;
+                transform: none;
+                flex-direction: row;
+                justify-content: center;
+                flex-wrap: wrap;
+                margin: 30px 0;
+            }
+        }
+        
+        .side-pictures.left {
+            left: 30px;
+        }
+        
+        .side-pictures.right {
+            right: 30px;
+        }
+        
+        .picture-frame {
+            width: 150px;
+            height: 200px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2), inset 0 0 5px rgba(0, 0, 0, 0.1);
+            padding: 5px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .picture-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .left .picture-frame:nth-child(1) {
+            transform: rotate(-5deg);
+        }
+        
+        .left .picture-frame:nth-child(2) {
+            transform: rotate(3deg);
+        }
+        
+        .right .picture-frame:nth-child(1) {
+            transform: rotate(6deg);
+        }
+        
+        .right .picture-frame:nth-child(2) {
+            transform: rotate(-4deg);
+        }
+        
+        .picture-frame:hover {
+            transform: scale(1.05) rotate(0deg);
+            z-index: 10;
+        }
+
+        /* Responsive layout */
+        @media (max-width: 1024px) {
+            .card-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .title {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Our Memory Since <u>27/2</u><br>We Have Been Together For <span id="daysCounter"><u>${dateAmount}</u></span> And Counting</h1>
+
+        <!-- Left side pictures -->
+        <div class="side-pictures left">
+            <div class="picture-frame">
+                <img src="./assets/img/unnamed0.jpg" alt="Love Memory 1">
+            </div>
+            <div class="picture-frame">
+                <img src="./assets/img/unnamed (3).jpg" alt="Love Memory 2">
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="card-grid">
+                <!-- Cards will be dynamically generated here -->
+            </div>
+        </div>
+        
+        <!-- Right side pictures -->
+        <div class="side-pictures right">
+            <div class="picture-frame">
+                <img src="./assets/img/unnamed (4).jpg" alt="Love Memory 3">
+            </div>
+            <div class="picture-frame">
+                <img src="./assets/img/fd13d578-84f2-4535-b54f-1ea4d39a19d7.jfif" alt="Love Memory 4">
+            </div>
+        </div>
+
+        <h1 class="title">I Want To Stay With You Forever <br> I Want To Make More Memory With You</h1>
+
+    </div>
+
+    <div class="music-controls">
+        <button id="playMusic">♫</button>
+        <button id="muteMusic">🔇</button>
+    </div>
+
+    <audio id="bgMusic" allow="autoplay" loop>
+        <source src="./assets/audio/Photograph - Ed Sheeran - tải mp3-lời bài hát.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        function daysSince(dateString) {
+            const oneDay = 24 * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds
+            const givenDate = new Date(dateString);
+            const today = new Date();
+
+            // Ensure time is not considered
+            givenDate.setHours(0, 0, 0, 0);
+            today.setHours(0, 0, 0, 0);
+
+            const diffInTime = today - givenDate;
+            const diffInDays = Math.floor(diffInTime / oneDay);
+
+            return diffInDays;
+        }
+
+        const dateAmount = daysSince("2025-02-27");
+
+        document.addEventListener('DOMContentLoaded', function() {
+        const dateAmount = daysSince("2025-02-27");
+        document.getElementById('daysCounter').textContent = dateAmount + " Days";
+        
+        // Update the title in the document
+        // document.title = `Our Memory - ${dateAmount} Days Together`;
+    });
+
+        // Card data
+        const cardData = [
+            { 
+                image: "./assets/img/unnamed (6).jpg", 
+                date: "27-2",
+                message: "27-2 Our first message on Tinder) From the moment I first saw you, I knew you were special. Your smile lights up even my darkest days, and your laugh is the soundtrack to my happiness." 
+            },
+            { 
+                image: "./assets/img/unnamed3.jpg", 
+                date: "6-3",
+                message: "(6-3 Our first discord movie night) what movie ? Every morning I wake up thankful that you're in my life. You've shown me what it means to truly love and be loved in return." 
+            },
+            { 
+                image: "./assets/img/Screenshot 2025-04-21 113734.png", 
+                date: "19-3",
+                message: "(19-3 Our first date) Our love story is my favorite story. Every chapter with you is better than the last, and I can't wait to see what comes next." 
+            },
+            { 
+                image: "./assets/img/unnamed (8).jpg", 
+                date: "22-3",
+                message: "(22-3 Our second date Our first hand holding) movie interstella You make ordinary moments extraordinary just by being you. Thank you for bringing so much joy into my life." 
+            },
+            { 
+                image: "./assets/img/unnamed2.jpg", 
+                date: "23-3",
+                message: "(23-3 second discord movie night) what movie ? I love the way you look at me as if I'm the only person in the world. It makes me feel so special and cherished." 
+            },
+            { 
+                image: "./assets/img/vn-11134207-7qukw-lhy4tzuozh6pc2.jfif", 
+                date: "25-3",
+                message: "(25-3 our third date) Your kindness and compassion inspire me every day. You make me want to be the best version of myself." 
+            },
+            { 
+                image: "./assets/img/unnamed (7).jpg", 
+                date: "27/3",
+                message: "(27/3 our fourth date) When I'm with you, I feel like I'm home. You're my safe place, my comfort, and my greatest adventure all at once." 
+            },
+            { 
+                image: "./assets/img/1200wx1800h_1661793911854.jpg", 
+                date: "29/3",
+                message: "(29/3 our 5 date) I love your strength, your vulnerability, and everything in between. You are perfectly imperfect in all the ways that matter." 
+            },
+            { 
+                image: "./assets/img/unnamed (5).jpg", 
+                date: "1/4",
+                message: "(1/4 our 6 date) The way you understand me without words amazes me. It's like you can read my soul, and somehow you still choose to love me." 
+            },
+            { 
+                image: "./assets/img/Screenshot 2025-04-21 115114.png",
+                date: "3/4", 
+                message: "(3/4) You've taught me that love isn't just a feeling - it's a choice we make every day. And I choose you, today and always." 
+            },
+            { 
+                image: "./assets/img/unnamed (9).jpg", 
+                date: "4/4",
+                message: "(4/4) I love our quiet moments together just as much as our adventures. With you, simply existing side by side feels like magic." 
+            },
+            { 
+                image: "./assets/img/6d4ad05d-9cb1-43a6-82ee-ecfbc46761b1.jfif", 
+                date: "5/4",
+                message: "(5/4) Your touch still gives me butterflies, even after all this time. Some things never fade, and my love for you only grows stronger." 
+            },
+            { 
+                image: "./assets/img/unnamed (10).jpg", 
+                date: "7/4",
+                message: "(7/4) I admire your passion and dedication to everything you do. Your determination inspires me to pursue my own dreams with courage." 
+            },
+            { 
+                image: "./assets/img/3dc149da-d138-4d4d-87a1-4cdf17afebfe.jfif", 
+                date: "9/4",
+                message: "(9/4 Our first kiss) Thank you for being patient with me, for loving me through my flaws, and for believing in me when I don't believe in myself." 
+            },
+            { 
+                image: "./assets/img/unnamed.png", 
+                date: "10/4",
+                message: "(10/4 first ride to work) You've shown me what true partnership means - supporting each other, growing together, and facing life's challenges as a team." 
+            },
+            { 
+                image: "./assets/img/unnamed1.jpg", 
+                date: "12/4",
+                message: "(12/4) Every day with you feels like a gift. I promise to cherish our love and never take a single moment for granted." 
+            },
+            { 
+                image: "./assets/img/download.png", 
+                date: "13/4",
+                message: "(13/4) Every day with you feels like a gift. I promise to cherish our love and never take a single moment for granted." 
+            },
+            { 
+                image: "./assets/img/Screenshot 2025-04-21 092333.png", 
+                date: "15-4",
+                message: "(15/4) Every day with you feels like a gift. I promise to cherish our love and never take a single moment for granted." 
+            },
+            { 
+                image: "./assets/img/unnamed (1).jpg", 
+                date: "18-4",
+                message: "(18/4) Every day with you feels like a gift. I promise to cherish our love and never take a single moment for granted." 
+            },
+            { 
+                image: "./assets/img/Screenshot 2025-04-21 092356.png", 
+                date: "20-4",
+                message: "(20/4) Every day with you feels like a gift. I promise to cherish our love and never take a single moment for granted." 
+            }
+            
+        ];
+
+        // Create cards
+        const cardGrid = document.querySelector('.card-grid');
+        
+        cardData.forEach((card, index) => {
+            const cardElement = document.createElement('div');
+            cardElement.className = 'card';
+            cardElement.innerHTML = `
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="${card.image || '/api/placeholder/180/250'}" alt="Love Card ${index + 1}">
+                    </div>
+                    <div class="card-back">
+                        <div class="card-header">${card.date}</div>
+                        <div class="card-divider"></div>
+                        <div class="card-message">
+                            <p>${card.message}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            cardGrid.appendChild(cardElement);
+            
+            // Add flip functionality
+            cardElement.addEventListener('click', function() {
+                this.classList.toggle('flipped');
+                createHeartRain(20); // Increased number of hearts when card is flipped
+            });
+        });
+
+        // Function to create falling hearts
+        function createHeart(className = 'heart') {
+            const heart = document.createElement('div');
+            heart.className = className;
+            heart.innerHTML = '❤';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.top = '-50px'; // Start above the viewport
+            heart.style.animationDuration = Math.random() * 3 + 2 + 's';
+            heart.style.fontSize = Math.random() * 24 + 10 + 'px';
+            heart.style.opacity = Math.random() * 0.5 + 0.5;
+            document.body.appendChild(heart);
+            
+            // Remove heart after animation completes
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+            
+            return heart;
+        }
+
+        // Create falling hearts on click
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.card') || e.target.closest('.picture-frame') || e.target.closest('.music-controls')) {
+                // Don't create hearts for card/frame clicks as they have their own hearts
+                return;
+            }
+            const heart = createHeart();
+            heart.style.left = e.clientX + 'px';
+            heart.style.top = e.clientY + 'px';
+        });
+
+        // Function to create a rain of hearts
+        function createHeartRain(count, className = 'heart') {
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    createHeart(className);
+                }, i * 50);
+            }
+        }
+
+        // Global variable to store interval
+        let heartRainInterval;
+
+        // Function to continuously create hearts
+        function createContinuousHeartRain() {
+            // Create 1-3 hearts every interval
+            const heartCount = Math.floor(Math.random() * 3) + 1;
+            for (let i = 0; i < heartCount; i++) {
+                createHeart();
+            }
+        }
+
+        // Initial heart rain when page loads
+        window.addEventListener('load', () => {
+            // Initial burst of hearts
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const heart = createHeart('initial-heart');
+                    heart.style.left = Math.random() * 100 + 'vw';
+                }, i * 50);
+            }
+
+            // Start continuous heart rain that never stops
+            heartRainInterval = setInterval(createContinuousHeartRain, 400);
+
+            // Try to play music automatically
+            const bgMusic = document.getElementById('bgMusic');
+            bgMusic.volume = 0.3;
+            const playPromise = bgMusic.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log("Autoplay prevented: ", error);
+                });
+            }
+        });
+
+        // Keep hearts falling even when tab is inactive
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                // If interval was cleared, restart it
+                if (!heartRainInterval) {
+                    heartRainInterval = setInterval(createContinuousHeartRain, 400);
+                }
+            }
+        });
+
+        // Music controls
+        document.getElementById('playMusic').addEventListener('click', () => {
+            const bgMusic = document.getElementById('bgMusic');
+            bgMusic.play();
+            bgMusic.volume = 0.3;
+        });
+
+        document.getElementById('muteMusic').addEventListener('click', () => {
+            const bgMusic = document.getElementById('bgMusic');
+            if (bgMusic.muted) {
+                bgMusic.muted = false;
+            } else {
+                bgMusic.muted = true;
+            }
+        });
+        
+        // Add interaction to side pictures
+        const pictures = document.querySelectorAll('.picture-frame');
+        pictures.forEach(picture => {
+            picture.addEventListener('click', () => {
+                createHeartRain(15);
+            });
+        });
+
+        // Make sure side pictures are positioned properly on window resize
+        window.addEventListener('resize', () => {
+            const sidePictures = document.querySelectorAll('.side-pictures');
+            if (window.innerWidth <= 1400) {
+                sidePictures.forEach(div => {
+                    div.style.position = 'static';
+                    div.style.transform = 'none';
+                });
+            } else {
+                const leftPics = document.querySelector('.side-pictures.left');
+                const rightPics = document.querySelector('.side-pictures.right');
+                
+                leftPics.style.position = 'fixed';
+                leftPics.style.transform = 'translateY(-50%)';
+                
+                rightPics.style.position = 'fixed';
+                rightPics.style.transform = 'translateY(-50%)';
+            }
+        });
+    </script>
+</body>
+</html>
