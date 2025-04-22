@@ -303,7 +303,7 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="title">Our Memory <br>Today is <span id="todayDate"></span> <br> We've Shared <span id="daysCounter"><u>${dateAmount}</u></span> Beautiful Days Together</h1>
+        <h1 class="title">Our Memory <br>Today is <span id="todayDate"></span> <br> We've Shared <span id="daysCounter"><u>${dateAmount}</u></span> Beautiful Days Together <br> Here is just a few of our memory </h1>
 
         <!-- Left side pictures -->
         <div class="side-pictures left">
@@ -380,10 +380,10 @@
     
             // Function to attempt playing music
             const attemptPlayMusic = function() {
-                // bgMusic.play().catch(error => {
-                //     console.log("Still waiting for interaction: ", error);
-                //     // We'll try again on the next user interaction
-                // });
+                bgMusic.play().catch(error => {
+                    console.log("Still waiting for interaction: ", error);
+                    // We'll try again on the next user interaction
+                });
             };
             
             // Try to play on various user interactions
@@ -391,7 +391,7 @@
             
             userInteractions.forEach(event => {
                 document.addEventListener(event, function interactionHandler() {
-                    //attemptPlayMusic();
+                    attemptPlayMusic();
                     
                     // If successful play occurs on any event, we can remove all listeners
                     bgMusic.addEventListener('playing', function() {
@@ -416,102 +416,102 @@
             { 
                 image: "./assets/img/unnamed (6).jpg", 
                 date: "27/2",
-                message: "<b>Tin nhắn đầu tiên trên Tinder.</b> Vào lúc đó a muốn tìm một người để nói chuyện và gửi meme cho nhau. A không nghĩ rằng mình sẽ tìm thấy một người sẽ thay đổi cuộc sống của a." 
+                message: "<b>Tin nhắn đầu tiên trên Tinder.</b> Vào lúc đó anh muốn tìm một người để nói chuyện và gửi meme cho nhau. Anh không nghĩ rằng mình sẽ tìm thấy em, một người sẽ thay đổi cuộc sống của anh." 
             },
             { 
                 image: "./assets/img/unnamed3.jpg", 
                 date: "6/3",
-                message: "<b>Buổi tối xem phim đầu tiên trên Discord.</b> Chúng ta đã cùng xem The Gorge. A đã hơi thất vọng vì muốn nghe giọng của e. Nhưng a vẫn khá thích buổi tối đó vì cùng xem phim vs e. " 
+                message: "<b>Buổi tối xem phim đầu tiên trên Discord.</b> Chúng mình đã cùng xem The Gorge. Anh đã hơi thất vọng vì muốn nghe giọng của e. Nhưng anh vẫn khá thích buổi tối đó vì cùng xem phim vs e. " 
             },
             { 
                 image: "./assets/img/Screenshot 2025-04-21 113734.png", 
                 date: "19/3",
-                message: "<b>Buổi hẹn đầu tiên.</b> E làm a hơi ngạc nhiên nên a đã hơi lo lắng về vẻ ngoài của mình. Nhưng khi nhìn thấy e, a đã quên hết mọi thứ xung quanh. E thật sự rất xinh đẹp và dễ thương. A đã rất vui khi được gặp e" 
+                message: "<b>Buổi hẹn đầu tiên.</b> Em làm anh hơi bất ngờ nên anh đã hơi lo lắng về vẻ ngoài của mình. Nhưng khi nhìn thấy em, anh đã quên hết mọi thứ xung quanh. Em thật sự rất xinh đẹp và dễ thương." 
             },
             { 
                 image: "./assets/img/unnamed (8).jpg", 
                 date: "22/3",
-                message: "<b>Lần nắm tay đầu tiên.</b> A đã rất muốn nắm tay e tối hôm đó nhưng hơi ngại. Nhưng a đã quyết định nắm lấy cơ hội và nắm tay e trong lúc xem phim. Cảm giác tay e thật ấm áp và mềm mại." 
+                message: "<b>Lần nắm tay đầu tiên.</b> Anh đã quyết định nắm lấy cơ hội và nắm tay e trong lúc xem phim. Cảm giác tay em thật ấm áp và mềm mại. Anh lên kế hoạch không tốt nên hơn 11h cả 2 mới đi ăn tại Circle K nhưng em không trách móc gì anh." 
             },
             { 
                 image: "./assets/img/unnamed2.jpg", 
                 date: "23/3",
-                message: "Chúng ta cùng ngồi xem phim <b>Ride Your Wave</b>. Cả bộ phim a chỉ nghĩ về e và muốn ngồi cạnh e và nắm tay e. " 
+                message: "Chúng mình cùng ngồi xem phim <b>Ride Your Wave</b>. Một bộ phim tình cảm có cả buồn và vui khiến anh nghĩ về em và mối quan hệ của chúng mình. " 
             },
             { 
                 image: "./assets/img/vn-11134207-7qukw-lhy4tzuozh6pc2.jfif", 
                 date: "25/3",
-                message: "<b>Món quà đầu tiên.</b> A muốn mua tặng e một món quà, một chỗ e có thể xả những nối buồn mà e chưa thể kể với a. Và a đã tìm thấy món quà hoàn hảo đó là một cuốn sách tô màu. " 
+                message: "<b>Món quà đầu tiên.</b> anh muốn mua tặng em một món quà, một thứ em có thể xả những nỗi buồn mà em chưa thể kể với anh. Và một cuốn sách tô màu chính là món quà hoàn hảo mà anh tìm thấy. " 
             },
             { 
                 image: "./assets/img/unnamed (7).jpg", 
                 date: "27/3",
-                message: "<b>Lần đầu tiên a đi pub</b>. A đã hơi lo lắng vì không biết thực đơn có gì. A thực sự thấy rất vui khi được ngồi cùng e và nói những mẩu chuyện nhỏ nhặt. A đã rất vui khi được nhìn thấy e cười và vui vẻ." 
+                message: "<b>Lần đầu tiên anh đi pub</b>. anh đã hơi lo lắng vì không biết thực đơn có gì. anh thực sự thấy rất vui khi được ngồi cùng em và nói những mẩu chuyện nhỏ nhặt." 
             },
             { 
                 image: "./assets/img/1200wx1800h_1661793911854.jpg", 
                 date: "29/3",
-                message: "Chúng ta đi triển lãm Thái Lan và xem phim ở ngoài trời. Hôm đó khá lạnh và <b>e đã tựa đầu vào vai a</b> khi xem phim. Thật sự tim a đã rất giao động lúc đó. Khoảng khắc đó dường như bộ phim ko còn quan trọng nữa mà chỉ có e và a." 
+                message: "Chúng mình đi triển lãm Thái Lan và xem phim ở ngoài trời. Hôm đó khá lạnh và <b>em đã tựa đầu vào vai anh</b> khi xem phim. Thật sự tim anh đã rất giao động lúc đó. Khoảng khắc đó dường như bộ phim ko còn quan trọng nữa mà chỉ có em và anh." 
             },
             { 
                 image: "./assets/img/unnamed (5).jpg", 
                 date: "1/4",
-                message: "A biết e sắp đi Nha Trang và a cũng hơi lo lắng và đã quyết định mua bó hoa e thích để khi e về <b>bó hoa có thể thay a đón chào e về nhà.</b>" 
+                message: "Anh biết em sắp đi Nha Trang và anh cũng hơi lo lắng và đã quyết định mua bó hoa em thích để khi em về <b>bó hoa có thể thay anh đón chào em về nhà.</b>" 
             },
             { 
                 image: "./assets/img/Screenshot 2025-04-21 115114.png",
                 date: "3/4", 
-                message: "Sáng hôm đó e bay vào Nha Trang và a muốn được đưa e đi ra sân bay nhưng không được nhưng a vẫn <b>muốn gặp e trước khi e đi</b> nên a đã dậy sớm và đến bên e trước khi e đi <b>vì muốn làm e bất ngờ.</b>" 
+                message: "Sáng hôm đó em bay vào Nha Trang và anh muốn được đưa em đi ra sân bay nhưng không được nhưng anh vẫn <b>muốn gặp em trước khi em đi</b> nên anh đã dậy sớm và đến bên em trước khi em đi <b>vì muốn làm em bất ngờ.</b>" 
             },
             { 
                 image: "./assets/img/unnamed (9).jpg", 
                 date: "4/4",
-                message: "A nghĩ e sẽ mệt nhưng e vẫn đồng ý đi chơi với a. A đã rất vui khi được gặp e, a <b>muốn làm e đỡ mệt</b>. A đã rất vui khi được nhìn thấy e cười và vui vẻ. Tối hôm đó cũng là lần đầu tiên a <b>public mối quan hệ của a với e.</b> " 
+                message: "Anh nghĩ em sẽ mệt nhưng em vẫn đồng ý đi chơi với anh. anh đã rất vui khi được gặp em, anh <b>muốn làm em đỡ mệt</b>. anh đã rất vui khi được nhìn thấy em cười và vui vẻ. Tối hôm đó cũng là lần đầu tiên anh <b>public mối quan hệ của anh với em.</b> " 
             },
             { 
                 image: "./assets/img/6d4ad05d-9cb1-43a6-82ee-ecfbc46761b1.jfif", 
                 date: "5/4",
-                message: "<b>Lần đầu tiên a thấy e say</b>. A cảm nhận được lúc đó <b>e cảm thấy đủ an toàn khi ở bên cạnh a để thể hiện ra sự hồn nhiên của mình.</b>" 
+                message: "<b>Lần đầu tiên anh thấy em say</b>. anh cảm nhận được lúc đó <b>em cảm thấy đủ an toàn khi ở bên cạnh anh để thể hiện ra sự hồn nhiên của mình.</b>" 
             },
             { 
                 image: "./assets/img/unnamed (10).jpg", 
                 date: "7/4",
-                message: "(7/4) I admire your passion and dedication to everything you do. Your determination inspires me to pursue my own dreams with courage." 
+                message: "" 
             },
             { 
                 image: "./assets/img/3dc149da-d138-4d4d-87a1-4cdf17afebfe.jfif", 
                 date: "9/4",
-                message: "(9/4 Our first kiss) Thank you for being patient with me, for loving me through my flaws, and for believing in me when I don't believe in myself." 
+                message: "Em phải về sớm vì mẹ gọi, nhưng trước khi đi, em đã dạy anh ôm. <b>Cái ôm thật lâu, thật ấm, rồi nụ hôn nhẹ trên trán.</b> Đôi mắt em trong đêm ánh lên. Một nụ hôn vụng dại, nhẹ nhàng và thật sâu. Em nghe tim anh đập, còn anh... chỉ mong thời gian ngừng lại." 
             },
             { 
                 image: "./assets/img/unnamed.png", 
                 date: "10/4",
-                message: "(10/4 first ride to work) You've shown me what true partnership means - supporting each other, growing together, and facing life's challenges as a team." 
+                message: "Sáng sớm, anh quay lại nơi cũ, tìm chiếc hoa tai em đánh rơi. Và anh tìm thấy – một nửa kỷ niệm đầu tiên của nụ hôn. <b>Mỗi người giữ một chiếc như giữ lại một vật kỷ niệm cho nụ hôn đầu.</b>" 
             },
             { 
                 image: "./assets/img/unnamed1.jpg", 
                 date: "12/4",
-                message: "(12/4) Every day with you feels like a gift. I promise to cherish our love and never take a single moment for granted." 
+                message: "Một vòng hồ Tây với chiếc xe đạp, một ly tào phớ anh mua cho em. Chiều đón em tan học, rủ nhau ra công viên Cầu Giấy. <b>Những buổi chiều đơn giản nhưng đầy yêu thương.</b>" 
             },
             { 
                 image: "./assets/img/download.png", 
                 date: "13/4",
-                message: "(13/4) Every day with you feels like a gift. I promise to cherish our love and never take a single moment for granted." 
+                message: "Hôm đó, tại quán cafe ban công ở phố cổ mà em thích, <b>chúng mình ngồi viết điều mình thích và muốn bỏ vào lọ sao.</b> Cùng nhau đọc, cùng nhau ăn tối, xem phim “Before Sunrise” – <b>em ngủ gật trên vai anh, còn anh chỉ muốn giữ em như thế mãi mãi.</b>" 
             },
             { 
                 image: "./assets/img/Screenshot 2025-04-21 092333.png", 
                 date: "15-4",
-                message: "(15/4) Every day with you feels like a gift. I promise to cherish our love and never take a single moment for granted." 
+                message: "Công viên gần nhà, kimbap, đua xe, đi bộ quanh khu phố sang trọng. <b>Em suýt nữa đã nằm lên đùi anh.</b> Anh và em cùng nhau trả lời 10 câu hỏi để hiểu nhau hơn. Những cái ôm, những nụ hôn... không dài, nhưng thấm mãi." 
             },
             { 
                 image: "./assets/img/unnamed (1).jpg", 
                 date: "18-4",
-                message: "(18/4) Every day with you feels like a gift. I promise to cherish our love and never take a single moment for granted." 
+                message: "Bữa sáng chuộc lỗi. Tối đó mưa, mình không lên được hồ Gươm. Nhưng lại có một quán cafe mèo, cùng nhau xem phim quả quýt <b>em tựa đầu lên vai anh – thật ấm áp và ngọt ngào, anh có thể ngồi như vậy mãi.</b>" 
             },
             { 
                 image: "./assets/img/Screenshot 2025-04-21 092356.png", 
                 date: "20-4",
-                message: "(20/4) Every day with you feels like a gift. I promise to cherish our love and never take a single moment for granted." 
+                message: "Em có deadline, nhưng vẫn ráng hoàn thành sớm để gặp anh. Mì vằn thắn, kem Tràng Tiền, và những bước chân bên nhau quanh hồ Gươm. <b>Chỉ cần em còn nắm tay anh, anh sẽ luôn đi cùng em.</b>" 
             }
             
         ];
