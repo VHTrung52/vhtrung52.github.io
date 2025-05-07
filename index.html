@@ -117,7 +117,6 @@
             transform: rotateY(180deg);
             background-color: #f48fb1;
             padding: 15px;
-            overflow-y: auto;
             color: #4a0012;
             font-size: 14px;
             line-height: 1.4;
@@ -147,16 +146,29 @@
             width: 100%;
             padding: 5px 0;
             display: flex;
-            align-items: center;
+            align-items: flex-start; /* Change from center to allow scrolling from top */
             justify-content: center;
         }
 
-        .card-back::-webkit-scrollbar {
+        .card-message p {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-wrap: break-word;
+        }
+
+        /* Added scrollbar styling for the message area */
+        .card-message::-webkit-scrollbar {
             width: 5px;
         }
 
-        .card-back::-webkit-scrollbar-thumb {
+        .card-message::-webkit-scrollbar-thumb {
             background: #e91e63;
+            border-radius: 10px;
+        }
+
+        .card-message::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
         }
 
@@ -275,6 +287,81 @@
         .picture-frame:hover {
             transform: scale(1.05) rotate(0deg);
             z-index: 10;
+        }
+
+        /* Slideshow styling */
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slideshow-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .slideshow-slide.active {
+            opacity: 1;
+        }
+
+        .slideshow-controls {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            z-index: 5;
+        }
+
+        .slideshow-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+        }
+
+        .slideshow-dot.active {
+            background-color: #fff;
+        }
+
+        .slideshow-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.3);
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 14px;
+            line-height: 1;
+            z-index: 5;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .slideshow-btn:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .slideshow-prev {
+            left: 5px;
+        }
+
+        .slideshow-next {
+            right: 5px;
         }
 
         /* Responsive layout */
@@ -549,19 +636,19 @@
                 message: "Đơn giản là một buổi chiều tại công viên, hai chiếc bánh ngọt và những câu chuyện nhỏ. Thật nhẹ nhàng và ấm áp." 
             },
             { 
-                image: "./assets/img/unnamed4.jpg", 
+                image: ["./assets/img/unnamed4.jpg", "./assets/img/unnamed (16).jpg"], 
                 date: "3-5",
                 message: "Một ngày em plan cho anh. Chúng mình đã cùng nhau đi xem phim Thunderbolts, lên phố cổ ăn tối và cafe, rồi cùng đi tour đêm Văn Miếu. Thật lâu rồi mới có cả một ngày được ở bên em." 
             },
             { 
-                image: "./assets/img/unnamed (12).jpg", 
+                image: ["./assets/img/unnamed (12).jpg", "./assets/img/unnamed (18).jpg", "./assets/img/unnamed (17).jpg", "./assets/img/unnamed (14).jpg"], 
                 date: "4-5",
                 message: "<b>Our Special day ❤️.</b>" 
             },
             { 
-                image: "./assets/img/unnamed (13).jpg", 
+                image: ["./assets/img/unnamed (13).jpg", "./assets/img/unnamed (15).jpg"], 
                 date: "6-5",
-                message: "Món quà em làm tặng anh, nó là một máy coupon. Trong đó chứa rất nhiều thứ từ những việc chúng mình có thể làm cùng nhau cho đến những ý tưởng cho một ngày thú vị cùng em. Anh sẽ luôn trân trọng mọi món quà em tặng anh." 
+                message: "Món quà em làm tặng anh, nó là một máy coupon. Trong đó chứa rất nhiều thứ từ những việc chúng mình có thể làm cùng nhau cho đến những ý tưởng cho một ngày thú vị cùng em. Anh sẽ luôn trân trọng mọi món quà em tặng anh. Em nằm lên đùi anh trong khi kể những câu chuyện và anh luồn tay qua mái tóc của em. Cảm giác thật tuyệt ❤️." 
             }
         ];
 
@@ -571,10 +658,37 @@
         cardData.forEach((card, index) => {
             const cardElement = document.createElement('div');
             cardElement.className = 'card';
+            
+            // Check if card.image is an array or a single string
+            let frontContent = '';
+            if (Array.isArray(card.image) && card.image.length > 1) {
+                // Create slideshow for multiple images
+                frontContent = `
+                    <div class="slideshow-container" data-card-index="${index}">
+                        ${card.image.map((img, imgIndex) => `
+                            <div class="slideshow-slide ${imgIndex === 0 ? 'active' : ''}" data-slide-index="${imgIndex}">
+                                <img src="${img}" alt="Love Memory ${index + 1}-${imgIndex + 1}">
+                            </div>
+                        `).join('')}
+                        <div class="slideshow-controls">
+                            ${card.image.map((_, dotIndex) => `
+                                <div class="slideshow-dot ${dotIndex === 0 ? 'active' : ''}" data-slide-index="${dotIndex}"></div>
+                            `).join('')}
+                        </div>
+                        <button class="slideshow-btn slideshow-prev" data-card-index="${index}">&lt;</button>
+                        <button class="slideshow-btn slideshow-next" data-card-index="${index}">&gt;</button>
+                    </div>
+                `;
+            } else {
+                // Single image display
+                const imgSrc = Array.isArray(card.image) ? card.image[0] : card.image;
+                frontContent = `<img src="${imgSrc || '/api/placeholder/180/250'}" alt="Love Card ${index + 1}">`;
+            }
+            
             cardElement.innerHTML = `
                 <div class="card-inner">
                     <div class="card-front">
-                        <img src="${card.image || '/api/placeholder/180/250'}" alt="Love Card ${index + 1}">
+                        ${frontContent}
                     </div>
                     <div class="card-back">
                         <div class="card-header">${card.date}</div>
@@ -588,11 +702,93 @@
             cardGrid.appendChild(cardElement);
             
             // Add flip functionality
-            cardElement.addEventListener('click', function() {
+            cardElement.addEventListener('click', function(e) {
+                // Don't flip if clicking on slideshow controls
+                if (e.target.closest('.slideshow-btn') || e.target.closest('.slideshow-dot')) {
+                    e.stopPropagation();
+                    return;
+                }
+                
                 this.classList.toggle('flipped');
                 createHeartRain(20); // Increased number of hearts when card is flipped
             });
         });
+
+        // Add slideshow functionality
+        function setupSlideshows() {
+            // Set up next/prev buttons
+            document.querySelectorAll('.slideshow-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const cardIndex = this.getAttribute('data-card-index');
+                    const container = document.querySelector(`.slideshow-container[data-card-index="${cardIndex}"]`);
+                    const slides = container.querySelectorAll('.slideshow-slide');
+                    const dots = container.querySelectorAll('.slideshow-dot');
+                    
+                    // Find current active slide
+                    let currentIndex = 0;
+                    slides.forEach((slide, idx) => {
+                        if (slide.classList.contains('active')) {
+                            currentIndex = idx;
+                        }
+                    });
+                    
+                    // Calculate new index
+                    let newIndex;
+                    if (this.classList.contains('slideshow-next')) {
+                        newIndex = (currentIndex + 1) % slides.length;
+                    } else {
+                        newIndex = (currentIndex - 1 + slides.length) % slides.length;
+                    }
+                    
+                    // Update active slide and dot
+                    slides[currentIndex].classList.remove('active');
+                    dots[currentIndex].classList.remove('active');
+                    slides[newIndex].classList.add('active');
+                    dots[newIndex].classList.add('active');
+                    
+                    createHeartRain(5); // Create a few hearts on slide change
+                });
+            });
+            
+            // Set up dots
+            document.querySelectorAll('.slideshow-dot').forEach(dot => {
+                dot.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const slideIndex = this.getAttribute('data-slide-index');
+                    const container = this.closest('.slideshow-container');
+                    const slides = container.querySelectorAll('.slideshow-slide');
+                    const dots = container.querySelectorAll('.slideshow-dot');
+                    
+                    // Remove active class from all slides and dots
+                    slides.forEach(slide => slide.classList.remove('active'));
+                    dots.forEach(dot => dot.classList.remove('active'));
+                    
+                    // Add active class to selected slide and dot
+                    slides[slideIndex].classList.add('active');
+                    this.classList.add('active');
+                    
+                    createHeartRain(5); // Create a few hearts on slide change
+                });
+            });
+            
+            // Auto-advance slideshows
+            const slideshows = document.querySelectorAll('.slideshow-container');
+            slideshows.forEach(slideshow => {
+                const cardIndex = slideshow.getAttribute('data-card-index');
+                setInterval(() => {
+                    // Only auto-advance if the card is not flipped
+                    const card = slideshow.closest('.card');
+                    if (!card.classList.contains('flipped')) {
+                        const nextBtn = slideshow.querySelector('.slideshow-next');
+                        nextBtn.click();
+                    }
+                }, 3000 + (cardIndex * 500)); // Stagger the timers slightly
+            });
+        }
+
+        // Call setup after creating cards
+        setupSlideshows();
 
         // Function to create falling hearts
         function createHeart(className = 'heart') {
@@ -616,8 +812,8 @@
 
         // Create falling hearts on click
         document.addEventListener('click', (e) => {
-            if (e.target.closest('.card') || e.target.closest('.picture-frame') || e.target.closest('.music-controls')) {
-                // Don't create hearts for card/frame clicks as they have their own hearts
+            if (e.target.closest('.card') || e.target.closest('.picture-frame') || e.target.closest('.music-controls') || e.target.closest('.slideshow-btn') || e.target.closest('.slideshow-dot')) {
+                // Don't create hearts for card/frame/control clicks as they have their own hearts
                 return;
             }
             const heart = createHeart();
@@ -662,7 +858,7 @@
             // Try to play music automatically
             const bgMusic = document.getElementById('bgMusic');
             bgMusic.volume = 0.3;
-            //const playPromise = bgMusic.play();
+            const playPromise = bgMusic.play();
             
             if (playPromise !== undefined) {
                 playPromise.catch(error => {
@@ -684,19 +880,12 @@
         // Music controls
         document.getElementById('playMusic').addEventListener('click', () => {
             const bgMusic = document.getElementById('bgMusic');
-            // bgMusic.play();
-            // bgMusic.volume = 0.3;
             if (bgMusic.muted) {
                bgMusic.muted = false;
             } else {
                bgMusic.muted = true;
             }
         });
-
-        //document.getElementById('muteMusic').addEventListener('click', () => {
-        //    const bgMusic = document.getElementById('bgMusic');
-
-        //});
         
         // Add interaction to side pictures
         const pictures = document.querySelectorAll('.picture-frame');
