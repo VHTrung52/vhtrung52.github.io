@@ -423,8 +423,7 @@
     </div>
 
     <div class="music-controls">
-        <button id="playMusic">♫</button>
-        <!-- <button id="muteMusic">🔇</button> -->
+        <button id="playMusic">🔊</button>
     </div>
 
     <audio id="bgMusic" allow="autoplay" loop>
@@ -897,10 +896,14 @@
         // Music controls
         document.getElementById('playMusic').addEventListener('click', () => {
             const bgMusic = document.getElementById('bgMusic');
+            const button = document.getElementById('playMusic');
+            
             if (bgMusic.muted) {
-               bgMusic.muted = false;
+                bgMusic.muted = false;
+                button.innerHTML = '🔊'; // Music note symbol for unmuted
             } else {
-               bgMusic.muted = true;
+                bgMusic.muted = true;
+                button.innerHTML = '🔇'; // Different symbol for muted (or use '🔇')
             }
         });
         
