@@ -71,11 +71,107 @@
         }
 
         .card {
-            width: 180px;
-            height: 250px; /* Changed from square to rectangle */
+            width: 210px;
+            height: 280px; /* Changed from square to rectangle */
             perspective: 1000px;
             cursor: pointer;
             margin-bottom: 20px;
+            position: relative;
+        }
+
+        /* Special card frame styling */
+        .card.special {
+            position: relative;
+        }
+
+        .card.special::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            background: linear-gradient(45deg, #ff6b9d, #ffd93d, #6bcf7f, #4d96ff, #9b59b6, #ff6b9d);
+            background-size: 400% 400%;
+            border-radius: 18px;
+            z-index: -1;
+            animation: specialGlow 3s ease-in-out infinite;
+            filter: blur(2px);
+        }
+
+        .card.special::after {
+            content: '⭐';
+            position: absolute;
+            top: -15px;
+            right: -10px;
+            font-size: 20px;
+            z-index: 10;
+            animation: sparkle 2s ease-in-out infinite;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+        }
+
+        .card.sad::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            background: linear-gradient(45deg, #4d96ff, #3a3830, #2e3830, #4d96ff, #333031, #534d4f);
+            background-size: 400% 400%;
+            border-radius: 18px;
+            z-index: -1;
+            animation: specialGlow 3s ease-in-out infinite;
+            filter: blur(2px);
+        }
+
+        .card.sad::after {
+            content: '🌧️';
+            position: absolute;
+            top: -15px;
+            right: -10px;
+            font-size: 35px;
+            z-index: 10;
+            animation: sad-sparkle 3s ease-in-out infinite;
+            text-shadow: 0 0 10px rgba(31, 30, 25, 0.8);
+        }
+
+        @keyframes specialGlow {
+            0%, 100% {
+                background-position: 0% 50%;
+                opacity: 0.7;
+            }
+            50% {
+                background-position: 100% 50%;
+                opacity: 1;
+            }
+        }
+
+        @keyframes sparkle {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2) rotate(180deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes sad-sparkle {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1) rotate(2deg);
+                opacity: 1;
+            }
+        }
+
+        /* Special card inner glow */
+        .card.special .card-inner {
+            box-shadow: 0 0 20px rgba(255, 182, 193, 0.6);
         }
 
         .card-inner {
@@ -116,7 +212,7 @@
         .card-back {
             transform: rotateY(180deg);
             background-color: #f48fb1;
-            padding: 15px;
+            /* padding: 15px; */
             color: #4a0012;
             font-size: 14px;
             line-height: 1.4;
@@ -126,18 +222,63 @@
             text-align: center;
         }
 
+        /* Special card back styling */
+        .card.special .card-back {
+            background: linear-gradient(135deg, #ffeef7, #f8bbd0);
+            border: 2px solid #ff69b4;
+        }
+
         .card-header {
             font-weight: bold;
             font-size: 16px;
             margin-bottom: 8px;
             color: #4a0012;
+            padding-top: 7px;
         }
+
+        /* Special card header */
+        .card.special .card-header {
+            color: #d81b60;
+            text-shadow: 1px 1px 2px rgba(255, 182, 193, 0.5);
+            position: relative;
+        }
+
+        .card.special .card-header::after {
+            content: '♥️';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 15px;
+        }
+
+        .card.sad .card-header {
+            text-shadow: 1px 1px 2px rgba(255, 182, 193, 0.5);
+            position: relative;
+        }
+
+        .card.sad .card-header::after {
+            content: '❤️‍🩹';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 15px;
+        }
+
+        
 
         .card-divider {
             width: 80%;
             height: 2px;
             background-color: #e91e63;
             margin-bottom: 10px;
+        }
+
+        /* Special card divider */
+        .card.special .card-divider {
+            background: linear-gradient(to right, #ff69b4, #ffd700, #ff69b4);
+            height: 3px;
         }
 
         .card-message {
@@ -153,8 +294,9 @@
         .card-message p {
             width: 100%;
             margin: 0;
-            padding: 0;
             overflow-wrap: break-word;
+            padding: 0 10px;
+
         }
 
         /* Added scrollbar styling for the message area */
@@ -390,7 +532,7 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="title"><span id="todayDate"></span> <br> We've Shared <span id="daysCounter"><u>${dateAmount}</u></span> Beautiful Days Together <br> Here is just a few of our memory📸</h1>
+        <h1 class="title"><span id="todayDate"></span> <br> We've Shared <span id="daysCounter"></span> Beautiful Days Together <br> Here is just a few of our memory📸</h1>
 
         <!-- Left side pictures -->
         <div class="side-pictures left">
@@ -449,8 +591,6 @@
             return diffInDays;
         }
 
-        const dateAmount = daysSince("2025-02-27");
-
         document.addEventListener('DOMContentLoaded', function() {
             const todayDate = new Date().toLocaleDateString('en-GB', { 
                 day: '2-digit', 
@@ -499,7 +639,7 @@
             });
         });
 
-        // Card data
+        // Card data with isSpecial variable
         const cardData = [
             { 
                 image: "unnamed (6).jpg", 
@@ -514,7 +654,8 @@
             { 
                 image: ["Screenshot 2025-04-21 113734.png", "unnamed (26).jpg"], 
                 date: "19/3",
-                message: "<b>Buổi hẹn đầu tiên.</b> Em làm anh hơi bất ngờ nên anh đã hơi lo lắng về vẻ ngoài của mình. Nhưng khi nhìn thấy em, anh đã quên hết mọi thứ xung quanh. Em thật sự rất xinh đẹp và dễ thương. Anh vẫn giữ lại order của em tối hôm đó để có thể mua cho món em thích và làm em bất ngờ." 
+                message: "<b>Buổi hẹn đầu tiên.</b> Em làm anh hơi bất ngờ nên anh đã hơi lo lắng về vẻ ngoài của mình. Nhưng khi nhìn thấy em, anh đã quên hết mọi thứ xung quanh. Em thật sự rất xinh đẹp và dễ thương. Anh vẫn giữ lại order của em tối hôm đó để có thể mua cho món em thích và làm em bất ngờ.",
+                isSpecial: true
             },
             { 
                 image: ["unnamed (8).jpg", "interstellar-poster-up.jpg", "108866de-1bbd-4947-8b24-0bc8f902bb0d.jfif"], 
@@ -539,7 +680,8 @@
             { 
                 image: "1200wx1800h_1661793911854.jpg", 
                 date: "29/3",
-                message: "Chúng mình đi triển lãm Thái Lan và xem phim ở ngoài trời. Hôm đó khá lạnh và <b>em đã tựa đầu vào vai anh</b> khi xem phim. Thật sự tim anh đã rất dao động lúc đó. Khoảng khắc đó dường như bộ phim ko còn quan trọng nữa mà chỉ có em và anh." 
+                message: "Chúng mình đi triển lãm Thái Lan và xem phim ở ngoài trời. Hôm đó khá lạnh và <b>em đã tựa đầu vào vai anh</b> khi xem phim. Thật sự tim anh đã rất dao động lúc đó. Khoảng khắc đó dường như bộ phim ko còn quan trọng nữa mà chỉ có em và anh.",
+                isSpecial: true
             },
             { 
                 image: ["unnamed (5).jpg", "unnamed (23).jpg"], 
@@ -549,12 +691,14 @@
             { 
                 image: "Screenshot 2025-04-21 115114.png",
                 date: "3/4", 
-                message: "Sáng hôm đó em bay vào Nha Trang, anh muốn được đưa em đi ra sân bay nhưng không được nhưng anh vẫn <b>muốn gặp em trước khi em đi</b> nên anh đã dậy sớm và đến bên em trước khi em đi <b>vì muốn làm em bất ngờ.</b>" 
+                message: "Sáng hôm đó em bay vào Nha Trang, anh muốn được đưa em đi ra sân bay nhưng không được nhưng anh vẫn <b>muốn gặp em trước khi em đi</b> nên anh đã dậy sớm và đến bên em trước khi em đi <b>vì muốn làm em bất ngờ.</b>",
+                isSpecial: true
             },
             { 
                 image: "unnamed (9).jpg", 
                 date: "4/4",
-                message: "Anh nghĩ em sẽ mệt nhưng em vẫn đồng ý đi chơi với anh. anh đã rất vui khi được gặp em, anh <b>muốn làm em đỡ mệt</b>. Anh đã rất vui khi được nhìn thấy em cười và vui vẻ. Tối hôm đó cũng là lần đầu tiên anh <b>public mối quan hệ của anh với em.</b> " 
+                message: "Anh nghĩ em sẽ mệt nhưng em vẫn đồng ý đi chơi với anh. anh đã rất vui khi được gặp em, anh <b>muốn làm em đỡ mệt</b>. Anh đã rất vui khi được nhìn thấy em cười và vui vẻ. Tối hôm đó cũng là lần đầu tiên anh <b>public mối quan hệ của anh với em.</b> ",
+                isSpecial: true 
             },
             { 
                 image: "6d4ad05d-9cb1-43a6-82ee-ecfbc46761b1.jfif", 
@@ -564,17 +708,20 @@
             { 
                 image: ["unnamed (10).jpg", "unnamed (22).jpg"], 
                 date: "7/4",
-                message: "<b>Lần đầu chúng mình cãi nhau.</b>" 
+                message: "<b>Lần đầu chúng mình cãi nhau.</b>",
+                isSad: true
             },
             { 
                 image: "3dc149da-d138-4d4d-87a1-4cdf17afebfe.jfif", 
                 date: "9/4",
-                message: "Em phải về sớm vì mẹ gọi, nhưng trước khi đi, em đã dạy anh ôm. <b>Cái ôm thật lâu, thật ấm, rồi nụ hôn nhẹ trên trán.</b> Đôi mắt em trong đêm ánh lên. Một nụ hôn vụng dại, nhẹ nhàng và thật sâu. Em nghe tim anh đập, còn anh... chỉ mong thời gian ngừng lại. Anh phát hiện ra anh đã làm rơi khuyên tai của em tối hôm đó (một kỷ niệm đáng nhớ :v)" 
+                message: "Em phải về sớm vì mẹ gọi, nhưng trước khi đi, em đã dạy anh ôm. <b>Cái ôm thật lâu, thật ấm, rồi nụ hôn nhẹ trên trán.</b> Đôi mắt em trong đêm ánh lên. Một nụ hôn vụng dại, nhẹ nhàng và thật sâu. Em nghe tim anh đập, còn anh... chỉ mong thời gian ngừng lại. Anh phát hiện ra anh đã làm rơi khuyên tai của em tối hôm đó (một kỷ niệm đáng nhớ :v)",
+                isSpecial: true
             },
             { 
                 image: "unnamed.png", 
                 date: "10/4",
-                message: "Sáng sớm, anh quay lại nơi cũ, tìm chiếc hoa tai em đánh rơi. Và anh tìm thấy – một nửa kỷ niệm đầu tiên của nụ hôn. <b>Mỗi người giữ một chiếc như giữ lại một vật kỷ niệm cho nụ hôn đầu.</b>" 
+                message: "Sáng sớm, anh quay lại nơi cũ, tìm chiếc hoa tai em đánh rơi. Và anh tìm thấy – một nửa kỷ niệm đầu tiên của nụ hôn. <b>Mỗi người giữ một chiếc như giữ lại một vật kỷ niệm cho nụ hôn đầu.</b>",
+                isSpecial: true
             },
             { 
                 image: "unnamed1.jpg", 
@@ -584,7 +731,8 @@
             { 
                 image: ["c1756aa4-3617-431d-a00d-5d5ee5760a51.gif", "unnamed (21).jpg" ,"ce21e6b8-098e-482c-be76-0ec88a7eb0c0.jfif", "download.png"], 
                 date: "13/4",
-                message: "Hôm đó, tại quán cafe Ban Công trên phố cổ mà em thích, <b>chúng mình ngồi viết điều mình thích và muốn bỏ vào lọ sao.</b> Cùng nhau đọc, cùng nhau ăn tối, xem phim “Before Sunrise” – <b>em ngủ gật trên vai anh, còn anh chỉ muốn giữ em như thế mãi mãi.</b> Em luôn làm anh cảm thấy bất ngờ bởi sự sáng tạo và ngọt ngào của em." 
+                message: "Hôm đó, tại quán cafe Ban Công trên phố cổ mà em thích, <b>chúng mình ngồi viết điều mình thích và muốn bỏ vào lọ sao.</b> Cùng nhau đọc, cùng nhau ăn tối, xem phim “Before Sunrise” – <b>em ngủ gật trên vai anh, còn anh chỉ muốn giữ em như thế mãi mãi.</b> Em luôn làm anh cảm thấy bất ngờ bởi sự sáng tạo và ngọt ngào của em.",
+                isSpecial: true
             },
             { 
                 image: ["Screenshot 2025-04-21 092333.png", "9f3ad046-ffd7-4a3c-8581-d7d1cb63efc4.jfif", ],
@@ -599,12 +747,14 @@
             { 
                 image: ["320f1301-f6f8-492f-97ce-764580b9b75f.gif", "b4d501cc-d4c3-4d3f-ba1a-b411230034fa.gif"], 
                 date: "20-4",
-                message: "Em có deadline, nhưng vẫn ráng hoàn thành sớm để gặp anh. Mì vằn thắn, kem Tràng Tiền, và những bước chân bên nhau quanh hồ Gươm. <b>Chỉ cần em còn nắm tay anh, anh sẽ luôn đi cùng em.</b>" 
+                message: "Em có deadline, nhưng vẫn ráng hoàn thành sớm để gặp anh. Mì vằn thắn, kem Tràng Tiền, và những bước chân bên nhau quanh hồ Gươm. <b>Chỉ cần em còn nắm tay anh, anh sẽ luôn đi cùng em.</b>",
+                isSpecial: true
             },
             { 
                 image: "unnamed.jpg", 
                 date: "23-4",
-                message: "<b>Món quà đặc biệt e làm riêng cho anh.</b>" 
+                message: "<b>Món quà đặc biệt e làm riêng cho anh.</b>",
+                isSpecial: true
             },
             { 
                 image: "unnamed6.jpg", 
@@ -624,7 +774,8 @@
             { 
                 image: "download (1).png", 
                 date: "29-4",
-                message: "<b>Lần đầu anh làm em khóc.</b>" 
+                message: "<b>Lần đầu anh làm em khóc.</b>",
+                isSad: true
             },
             { 
                 image: ["unnamed5.jpg","2d153a9a-8e17-4839-b5bc-6f5fa47f8754.gif", "6109bafd-5e79-498c-b530-d7092aba2760.gif"],
@@ -644,12 +795,14 @@
             { 
                 image: ["unnamed (12).jpg", "2ade70f8-0747-4136-a461-48597570b852.jfif", "4f2f5de5-44f3-4840-940b-cb38b70faff6.jfif", "unnamed (18).jpg", "unnamed (17).jpg", "unnamed (14).jpg"], 
                 date: "4-5",
-                message: "<b>Our Special day ❤️.</b>" 
+                message: "<b>Our Special day ❤️.</b>",
+                isSpecial: true
             },
             { 
                 image: ["a69aaead-7a4a-426d-a9af-9a6c44b02c02_sVy6SM6n.gif", "unnamed (13).jpg", "unnamed (15).jpg", "Nhà-Thờ_Easy-Resize.com_.jpg"], 
                 date: "6-5",
-                message: "Chúng mình lên nhà thờ lớn. Em tặng anh món quà em mất nhiều công sức để làm, nó là một máy coupon. Trong đó chứa những việc chúng mình có thể làm cùng nhau cho đến những ý tưởng cho một ngày thú vị. Anh sẽ luôn trân trọng mọi món quà em tặng anh. Em nằm lên đùi anh tại một góc nhỏ trong quán cafe trong khi kể những câu chuyện và anh luồn tay qua mái tóc của em. Cảm giác thật tuyệt ❤️." 
+                message: "Chúng mình lên nhà thờ lớn. Em tặng anh món quà em mất nhiều công sức để làm, nó là một máy coupon. Trong đó chứa những việc chúng mình có thể làm cùng nhau cho đến những ý tưởng cho một ngày thú vị. Anh sẽ luôn trân trọng mọi món quà em tặng anh. Em nằm lên đùi anh tại một góc nhỏ trong quán cafe trong khi kể những câu chuyện và anh luồn tay qua mái tóc của em. Cảm giác thật tuyệt ❤️.",
+                isSpecial: true
             },
             { 
                 image: ["93d8eaf7-bb36-48bb-b688-f011be49a7ad.jfif"], 
@@ -659,7 +812,8 @@
             { 
                 image: ["8f2b865e-1ab5-458b-8f2c-e1562062b468.gif","25ae0c90-09ff-4454-b49b-ef62a625ee6d.jfif", "642d6102-b1ea-4d00-bbdd-4a8de3b98a86.jfif", "1dd8587f-67ff-4db8-a64e-f7ba5bd0f352.jfif"], 
                 date: "11-5",
-                message: "Đón em sau khi em đi học về, cùng nhau đi ăn tối (lẩu ếch >.<). Chúng mình cùng nhau đi cafe nằm và xem phim. Em đã ngủ một chút trong lòng anh. Ước gì được như vậy mãi ❤️." 
+                message: "Đón em sau khi em đi học về, cùng nhau đi ăn tối (lẩu ếch >.<). Chúng mình cùng nhau đi cafe nằm và xem phim. Em đã ngủ một chút trong lòng anh. Ước gì được như vậy mãi ❤️.",
+                isSpecial: true 
             },
             { 
                 image: ["b66bcd3d-fd6d-43ff-8be7-06b09a17d0e0.gif", "d88028ba-8515-4025-95d7-b4523a183a16.jfif", "6edd4161-7a73-4c95-b1e3-097e00c6535d.jfif", "unnamed (27).jpg"], 
@@ -674,7 +828,8 @@
             { 
                 image: ["unnamed (29).jpg", "unnamed (32).jpg" ],
                 date: "17-5",
-                message: "Buổi date trước khi anh đi Ninh Bình. Hum đó anh cùng em đi xem đồ điện tử tại siêu thị điện máy và em nói \"Không có nhà anh nhà em mà là nhà chúng ta\". Cảm giác chúng mình như một cặp đôi mới cưới đang sắm sửa cho tổ ấm vậy. Xong chúng mình ngồi tại quán cafe viết về các tính cách của em mà anh cảm nhận. Anh đã không kịp nghe bức thư của em vì phải về sớm." 
+                message: "Buổi date trước khi anh đi Ninh Bình. Hum đó anh cùng em đi xem đồ điện tử tại siêu thị điện máy và em nói \"Không có nhà anh nhà em mà là nhà chúng ta\". Cảm giác chúng mình như một cặp đôi mới cưới đang sắm sửa cho tổ ấm vậy. Xong chúng mình ngồi tại quán cafe viết về các tính cách của em mà anh cảm nhận. Anh đã không kịp nghe bức thư của em vì phải về sớm.",
+                isSpecial: true
             },
             { 
                 image: ["unnamed (30).jpg", "unnamed (31).jpg"], 
@@ -684,7 +839,8 @@
             { 
                 image: ["unnamed (33).jpg", "cde2b1e6-4eef-41a9-88d1-5ef27e40067e.mp4.gif", "unnamed (35).jpg", "unnamed (34).jpg"], 
                 date: "22-5",
-                message: "Một buổi date nữa trước khi anh đi chơi, anh đã sử dụng coupon love letter và em đã viết tặng anh một bức thư thật đáng iu như con người em vậy. Chúng mình đã ôm nhau thật chặt thật lâu vì không muốn phải rời xa. Anh luôn ở trong trái tim em khi em còn nhớ về anh. Yêu em." 
+                message: "Một buổi date nữa trước khi anh đi chơi, anh đã sử dụng coupon love letter và em đã viết tặng anh một bức thư thật đáng iu như con người em vậy. Chúng mình đã ôm nhau thật chặt thật lâu vì không muốn phải rời xa. Anh luôn ở trong trái tim em khi em còn nhớ về anh. Yêu em.",
+                isSpecial: true
             },
         ];
 
@@ -693,7 +849,13 @@
         
         cardData.forEach((card, index) => {
             const cardElement = document.createElement('div');
-            cardElement.className = 'card';
+            if(card.isSpecial) {
+                cardElement.className = 'card special'
+            } else if (card.isSad) {
+                cardElement.className = 'card sad'
+            } else {
+                cardElement.className = 'card'
+            }
             
             // Check if card.image is an array or a single string
             let frontContent = '';
@@ -718,7 +880,7 @@
             } else {
                 // Single image display
                 const imgSrc = Array.isArray(card.image) ? card.image[0] : card.image;
-                frontContent = `<img src="./assets/img/${imgSrc || '/api/placeholder/180/250'}" alt="Love Card ${index + 1}">`;
+                frontContent = `<img src="./assets/img/${imgSrc}" alt="Love Card ${index + 1}">`;
             }
             
             cardElement.innerHTML = `
@@ -746,7 +908,9 @@
                 }
                 
                 this.classList.toggle('flipped');
-                createHeartRain(20); // Increased number of hearts when card is flipped
+                // Create more hearts for special cards
+                const heartCount = card.isSpecial ? 30 : 20;
+                createHeartRain(heartCount);
             });
         });
 
@@ -758,6 +922,8 @@
                     e.stopPropagation();
                     const cardIndex = this.getAttribute('data-card-index');
                     const container = document.querySelector(`.slideshow-container[data-card-index="${cardIndex}"]`);
+                    if (!container) return;
+                    
                     const slides = container.querySelectorAll('.slideshow-slide');
                     const dots = container.querySelectorAll('.slideshow-dot');
                     
@@ -817,7 +983,7 @@
                     const card = slideshow.closest('.card');
                     if (!card.classList.contains('flipped')) {
                         const nextBtn = slideshow.querySelector('.slideshow-next');
-                        nextBtn.click();
+                        if (nextBtn) nextBtn.click();
                     }
                 }, 2500 + (cardIndex * 400)); // Stagger the timers slightly
             });
@@ -923,7 +1089,7 @@
                 button.innerHTML = '🔊'; // Music note symbol for unmuted
             } else {
                 bgMusic.muted = true;
-                button.innerHTML = '🔇'; // Different symbol for muted (or use '🔇')
+                button.innerHTML = '🔇'; // Different symbol for muted
             }
         });
         
