@@ -988,14 +988,17 @@
             const cardElement = document.createElement('div');
             if(card.isSpecial) {
                 cardElement.className = 'card special'
-                if (card.date === "4-5") {
+                if (card.date === "4-5" || card.date === "9/4") {
                     cardElement.style.setProperty('--special-icon', "'❤️'");
                     cardElement.style.setProperty('--font-size', "35px");
-                    cardElement.style.setProperty('--animation', "sad-sparkle 3s ease-in-out infinite");
+                    cardElement.style.setProperty ('--animation', "sad-sparkle 3s ease-in-out infinite");
                 } else if (card.date === "7-6") {
                     cardElement.style.setProperty('--special-icon', "'💯'");
                     cardElement.style.setProperty('--font-size', "35px");
                     cardElement.style.setProperty('--animation', "sad-sparkle 3s ease-in-out infinite");
+                } else if (card.date === "6-5" || card.date === "22-5") {
+                    cardElement.style.setProperty('--special-icon', "'🎟️'");
+                    cardElement.style.setProperty('--font-size', "35px");
                 }
             } else if (card.isSad) {
                 cardElement.className = 'card sad'
