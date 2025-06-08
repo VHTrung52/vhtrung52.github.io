@@ -130,6 +130,8 @@
 
         .card.special {
             --special-icon: '⭐';
+            --font-size: 20px;
+            --animation: sparkle 2s ease-in-out infinite;
         }
 
         .card.special::after {
@@ -137,9 +139,9 @@
             position: absolute;
             top: -15px;
             right: -10px;
-            font-size: 20px;
+            font-size: var(--font-size);
             z-index: 10;
-            animation: sparkle 2s ease-in-out infinite;
+            animation: var(--animation);
             text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
         }
 
@@ -988,6 +990,9 @@
                 cardElement.className = 'card special'
                 if (card.date === "7-6") {
                     cardElement.style.setProperty('--special-icon', "'💯'");
+                    cardElement.style.setProperty('--font-size', "35px");
+                    cardElement.style.setProperty('--animation', "sad-sparkle 3s ease-in-out infinite");
+
                 }
             } else if (card.isSad) {
                 cardElement.className = 'card sad'
