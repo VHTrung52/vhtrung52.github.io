@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <title>Our Memory</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%23d81b60%22>❤</text></svg>">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #ffd1dc; /* Pink pastel background */
+            font-family: 'Arial', sans-serif;
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            padding-bottom: 80px; /* Space at the bottom */
+        }
+
+        /* Loading overlay for authentication checking */
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 209, 220, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #e91e63;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .heart {
+            position: fixed; /* Changed from absolute to fixed */
+            color: #ff6b81;
+            font-size: 24px;
+            animation: fall 4s linear forwards;
+            z-index: 1;
+            pointer-events: none; /* Ensures hearts don't interfere with clicks */
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .title {
+            color: #d81b60;
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 40px;
+            font-size: 36px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            position: relative;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 30px; /* Increased spacing between cards */
+            max-width: 1010px;
+            margin: 0 auto;
+        }
+
+        .card {
+            width: 180px;
+            height: 250px; /* Changed from square to rectangle */
+            perspective: 1000px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        /* Special card frame styling */
+        .card.special {
+            position: relative;
+        }
+
+        .card.special::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            background: linear-gradient(45deg, #ff6b9d, #ffd93d, #6bcf7f, #4d96ff, #9b59b6, #ff6b9d);
+            background-size: 400% 400%;
+            border-radius: 18px;
+            z-index: -1;
+            animation: specialGlow 3s ease-in-out infinite;
+            filter: blur(2px);
+        }
+
+        .card.special::after {
+            content: '⭐';
+            position: absolute;
+            top: -15px;
+            right: -10px;
+            font-size: 20px;
+            z-index: 10;
+            animation: sparkle 2s ease-in-out infinite;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+        }
+
+        .card.sad::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            background: linear-gradient(45deg, #4d96ff, #3a3830, #2e3830, #4d96ff, #333031, #534d4f);
+            background-size: 400% 400%;
+            border-radius: 18px;
+            z-index: -1;
+            animation: specialGlow 3s ease-in-out infinite;
+            filter: blur(2px);
+        }
+
+        .card.sad::after {
+            content: '🌧️';
+            position: absolute;
+            top: -15px;
+            right: -10px;
+            font-size: 35px;
+            z-index: 10;
+            animation: sad-sparkle 3s ease-in-out infinite;
+            text-shadow: 0 0 10px rgba(31, 30, 25, 0.8);
+        }
+
+        @keyframes specialGlow {
+            0%, 100% {
+                background-position: 0% 50%;
+                opacity: 0.7;
+            }
+            50% {
+                background-position: 100% 50%;
+                opacity: 1;
+            }
+        }
+
+        @keyframes sparkle {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2) rotate(180deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes sad-sparkle {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1) rotate(2deg);
+                opacity: 1;
+            }
+        }
+
+        /* Special card inner glow */
+        .card.special .card-inner {
+            box-shadow: 0 0 20px rgba(255, 182, 193, 0.6);
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-front {
+            background-color: #f8bbd0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .card-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            background-color: #f48fb1;
+            /* padding: 15px; */
+            color: #4a0012;
+            font-size: 14px;
+            line-height: 1.4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Special card back styling */
+        .card.special .card-back {
+            background: linear-gradient(135deg, #ffeef7, #f8bbd0);
+            border: 2px solid #ff69b4;
+        }
+
+        .card-header {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #4a0012;
+            padding-top: 7px;
+        }
+
+        /* Special card header */
+        .card.special .card-header {
+            color: #d81b60;
+            text-shadow: 1px 1px 2px rgba(255, 182, 193, 0.5);
+            position: relative;
+        }
+
+        .card.special .card-header::after {
+            content: '♥️';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 15px;
+        }
+
+        .card.sad .card-header {
+            text-shadow: 1px 1px 2px rgba(255, 182, 193, 0.5);
+            position: relative;
+        }
+
+        .card.sad .card-header::after {
+            content: '❤️‍🩹';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 15px;
+        }
+
+        .card-divider {
+            width: 80%;
+            height: 2px;
+            background-color: #e91e63;
+            margin-bottom: 10px;
+        }
+
+        .card-message {
+            flex: 1;
+            overflow-y: auto;
+            width: 100%;
+            padding: 5px 0;
+            display: flex;
+            align-items: flex-start; /* Change from center to allow scrolling from top */
+            justify-content: center;
+        }
+
+        .card-message p {
+            width: 100%;
+            margin: 0;
+            overflow-wrap: break-word;
+            padding: 0 10px;
+
+        }
+
+        /* Added scrollbar styling for the message area */
+        .card-message::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .card-message::-webkit-scrollbar-thumb {
+            background: #e91e63;
+            border-radius: 10px;
+        }
+
+        .card-message::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        /* Initial heart rain animation */
+        @keyframes initialHeartRain {
+            0% {
+                transform: translateY(-100vh) translateX(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) translateX(20px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .initial-heart {
+            position: fixed; /* Changed from absolute to fixed */
+            color: #ff6b81;
+            font-size: 24px;
+            animation: initialHeartRain 4s linear forwards;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .logout-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 10;
+            background-color: #f06292;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .logout-btn:hover {
+            background-color: #e91e63;
+        }
+
+        .music-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+        }
+
+        .music-controls button {
+            background-color: #f06292;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .music-controls button:hover {
+            background-color: #e91e63;
+        }
+        
+        /* Picture frames on sides */
+        .side-pictures {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        
+        @media (max-width: 1400px) {
+            .side-pictures {
+                position: static;
+                transform: none;
+                flex-direction: row;
+                justify-content: center;
+                flex-wrap: wrap;
+                margin: 30px 0;
+            }
+        }
+        
+        .side-pictures.left {
+            left: 30px;
+        }
+        
+        .side-pictures.right {
+            right: 30px;
+        }
+        
+        .picture-frame {
+            width: 150px;
+            height: 200px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2), inset 0 0 5px rgba(0, 0, 0, 0.1);
+            padding: 5px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .picture-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .left .picture-frame:nth-child(1) {
+            transform: rotate(-5deg);
+        }
+        
+        .left .picture-frame:nth-child(2) {
+            transform: rotate(3deg);
+        }
+        
+        .right .picture-frame:nth-child(1) {
+            transform: rotate(6deg);
+        }
+        
+        .right .picture-frame:nth-child(2) {
+            transform: rotate(-4deg);
+        }
+        
+        .picture-frame:hover {
+            transform: scale(1.05) rotate(0deg);
+            z-index: 10;
+        }
+
+        /* Slideshow styling */
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slideshow-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .slideshow-slide.active {
+            opacity: 1;
+        }
+
+        .slideshow-controls {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            z-index: 5;
+        }
+
+        .slideshow-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+        }
+
+        .slideshow-dot.active {
+            background-color: #fff;
+        }
+
+        .slideshow-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.3);
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 14px;
+            line-height: 1;
+            z-index: 5;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .slideshow-btn:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .slideshow-prev {
+            left: 5px;
+        }
+
+        .slideshow-next {
+            right: 5px;
+        }
+
+        /* Responsive layout */
+        @media (max-width: 1024px) {
+            .card-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .title {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading overlay while checking authentication -->
+    <div id="loadingOverlay">
+        <div class="loader"></div>
+    </div>
+
+    <div class="container">
+        <h1 class="title"><span id="todayDate"></span> <br> We've Shared <span id="daysCounter"></span> Beautiful Days Together <br> Here is just a few of our memory📸</h1>
+
+        <!-- Left side pictures -->
+        <div class="side-pictures left">
+            <div class="picture-frame">
+                <img src="./assets/img/unnamed0.jpg" alt="Love Memory 1">
+            </div>
+            <div class="picture-frame">
+                <img src="./assets/img/unnamed (3).jpg" alt="Love Memory 2">
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="card-grid">
+                <!-- Cards will be dynamically generated here -->
+            </div>
+        </div>
+        
+        <!-- Right side pictures -->
+        <div class="side-pictures right">
+            <div class="picture-frame">
+                <img src="./assets/img/unnamed (4).jpg" alt="Love Memory 3">
+            </div>
+            <div class="picture-frame">
+                <img src="./assets/img/fd13d578-84f2-4535-b54f-1ea4d39a19d7.jfif" alt="Love Memory 4">
+            </div>
+        </div>
+
+        <h1 class="title">I love you, my sweet little sunshine🔆 <br> Lets Make More Memory Together </h1>
+        	
+        <button id="logoutButton" class="logout-btn">Logout</button>
+
+    </div>
+
+    <div class="music-controls">
+        <button id="playMusic">🔊</button>
+    </div>
+
+    <audio id="bgMusic" allow="autoplay" loop>
+        <!-- <source src="./assets/audio/Photograph - Ed Sheeran - tải mp3-lời bài hát.mp3" type="audio/mpeg"> -->
+         <source src="./assets/audio/Elliot James Reay - I Think They Call This Love (Official Music Video).mp3" type="audio/mpeg">
+        
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+         // Get references to DOM elements
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const logoutButton = document.getElementById('logoutButton');
+        
+        // Check authentication state on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show loading overlay while checking auth
+            loadingOverlay.style.display = 'flex';
+            
+            // Listen for authentication state changes
+            firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                    // User is signed in, hide loading overlay and initialize page
+                    console.log('User is signed in:', user.email);
+                    loadingOverlay.style.display = 'none';
+                    initializePage();
+                } else {
+                    // No user is signed in, redirect to login page
+                    console.log('No user signed in, redirecting to login');
+                    window.location.href = 'index.html';
+                }
+            });
+        });
+        
+        // Initialize page content after authentication confirmation
+        function initializePage() {
+            const todayDate = new Date().toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+            document.getElementById('todayDate').innerHTML = `<span style="text-decoration: underline;">${todayDate}</span>`;
+            
+            const dateAmount = daysSince("2025-02-27");
+            document.getElementById('daysCounter').innerHTML = `<span style="text-decoration: underline;">${dateAmount}</span>`;
+            
+            // Initialize music
+            initializeMusic();
+            
+            // Create card grid
+            createCards();
+            
+            // Set up slideshows
+            setupSlideshows();
+            
+            // Start heart animations
+            startHeartAnimations();
+        }
+        
+        // Handle logout
+        logoutButton.addEventListener('click', () => {
+            loadingOverlay.style.display = 'flex';
+            firebase.auth().signOut()
+                .then(() => {
+                    // Successfully signed out, redirect to login page
+                    window.location.href = 'index.html';
+                })
+                .catch((error) => {
+                    console.error('Error signing out:', error);
+                    loadingOverlay.style.display = 'none';
+                });
+        });
+
+        function daysSince(dateString) {
+            const oneDay = 24 * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds
+            const givenDate = new Date(dateString);
+            const today = new Date();
+
+            // Ensure time is not considered
+            givenDate.setHours(0, 0, 0, 0);
+            today.setHours(0, 0, 0, 0);
+
+            const diffInTime = today - givenDate;
+            const diffInDays = Math.floor(diffInTime / oneDay);
+
+            return diffInDays;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const todayDate = new Date().toLocaleDateString('en-GB', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric' 
+            });            
+            document.getElementById('todayDate').innerHTML = `<span style="text-decoration: underline;">${todayDate}</span>`;
+
+            const dateAmount = daysSince("2025-02-27");
+            document.getElementById('daysCounter').innerHTML = `<span style="text-decoration: underline;">${dateAmount}</span>`;
+            
+            const bgMusic = document.getElementById('bgMusic');
+    
+            bgMusic.volume = 0.3;
+    
+            // Function to attempt playing music
+            const attemptPlayMusic = function() {
+                bgMusic.play().catch(error => {
+                    console.log("Still waiting for interaction: ", error);
+                    // We'll try again on the next user interaction
+                });
+            };
+            
+            // Try to play on various user interactions
+            const userInteractions = ['click', 'touchstart', 'keydown', 'scroll', 'mousemove'];
+            
+            userInteractions.forEach(event => {
+                document.addEventListener(event, function interactionHandler() {
+                    attemptPlayMusic();
+                    
+                    // If successful play occurs on any event, we can remove all listeners
+                    bgMusic.addEventListener('playing', function() {
+                        userInteractions.forEach(evt => {
+                            document.removeEventListener(evt, interactionHandler);
+                        });
+                        console.log("Music started successfully!");
+                    });
+                }, { once: false }); // May need multiple attempts
+            });
+            
+            // Also try when page becomes visible
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'visible') {
+                    attemptPlayMusic();
+                }
+            });
+        });
+
+        // Card data with isSpecial variable
+        const cardData = [
+            { 
+                image: "unnamed (6).jpg", 
+                date: "27/2",
+                message: "<b>Tin nhắn đầu tiên trên Tinder.</b> Vào lúc đó anh muốn tìm một người để nói chuyện và gửi meme cho nhau. Anh không nghĩ rằng mình sẽ tìm thấy em, một người sẽ thay đổi cuộc sống của anh." 
+            },
+            { 
+                image: "unnamed3.jpg", 
+                date: "6/3",
+                message: "<b>Buổi tối xem phim đầu tiên trên Discord.</b> Chúng mình đã cùng xem The Gorge. Anh đã hơi thất vọng vì muốn nghe giọng của em. Nhưng anh vẫn khá thích buổi tối đó vì cùng xem phim vs e. " 
+            },
+            { 
+                image: ["Screenshot 2025-04-21 113734.png", "unnamed (26).jpg"], 
+                date: "19/3",
+                message: "<b>Buổi hẹn đầu tiên.</b> Em làm anh hơi bất ngờ nên anh đã hơi lo lắng về vẻ ngoài của mình. Nhưng khi nhìn thấy em, anh đã quên hết mọi thứ xung quanh. Em thật sự rất xinh đẹp và dễ thương. Anh vẫn giữ lại order của em tối hôm đó để có thể mua cho món em thích và làm em bất ngờ.",
+                isSpecial: true
+            },
+            { 
+                image: ["unnamed (8).jpg", "interstellar-poster-up.jpg", "108866de-1bbd-4947-8b24-0bc8f902bb0d.jfif"], 
+                date: "22/3",
+                message: "<b>Lần nắm tay đầu tiên.</b> Anh đã quyết định nắm lấy cơ hội và nắm tay e trong lúc xem phim. Cảm giác tay em thật ấm áp và mềm mại. Anh lên kế hoạch không tốt nên hơn 11h cả 2 mới đi ăn tại Circle K nhưng em không trách móc gì anh." 
+            },
+            { 
+                image: "unnamed2.jpg", 
+                date: "23/3",
+                message: "Chúng mình cùng ngồi xem phim <b>Ride Your Wave</b>. Một bộ phim tình cảm có cả buồn và vui khiến anh nghĩ về em và mối quan hệ của chúng mình. " 
+            },
+            { 
+                image: "vn-11134207-7qukw-lhy4tzuozh6pc2.jfif", 
+                date: "25/3",
+                message: "<b>Món quà đầu tiên.</b> Anh muốn mua tặng em một món quà, một thứ em có thể xả những nỗi buồn mà em chưa thể kể với anh. Và một cuốn sách tô màu chính là món quà hoàn hảo mà anh tìm thấy. " 
+            },
+            { 
+                image: ["unnamed (7).jpg", "unnamed (24).jpg"], 
+                date: "27/3",
+                message: "<b>Lần đầu tiên anh đi pub</b>. Anh đã hơi lo lắng vì không biết thực đơn có gì. anh thực sự thấy rất vui khi được ngồi cùng em và nói những mẩu chuyện nhỏ nhặt." 
+            },
+            { 
+                image: "1200wx1800h_1661793911854.jpg", 
+                date: "29/3",
+                message: "Chúng mình đi triển lãm Thái Lan và xem phim ở ngoài trời. Hôm đó khá lạnh và <b>em đã tựa đầu vào vai anh</b> khi xem phim. Thật sự tim anh đã rất dao động lúc đó. Khoảng khắc đó dường như bộ phim ko còn quan trọng nữa mà chỉ có em và anh.",
+                isSpecial: true
+            },
+            { 
+                image: ["unnamed (5).jpg", "unnamed (23).jpg"], 
+                date: "1/4",
+                message: "Anh biết em sắp đi Nha Trang và anh cũng hơi lo lắng, anh đã quyết định mua bó hoa em thích để khi em về<b>, bó hoa có thể thay anh đón chào em về nhà.</b>" 
+            },
+            { 
+                image: "Screenshot 2025-04-21 115114.png",
+                date: "3/4", 
+                message: "Sáng hôm đó em bay vào Nha Trang, anh muốn được đưa em đi ra sân bay nhưng không được nhưng anh vẫn <b>muốn gặp em trước khi em đi</b> nên anh đã dậy sớm và đến bên em trước khi em đi <b>vì muốn làm em bất ngờ.</b>",
+                isSpecial: true
+            },
+            { 
+                image: "unnamed (9).jpg", 
+                date: "4/4",
+                message: "Anh nghĩ em sẽ mệt nhưng em vẫn đồng ý đi chơi với anh. anh đã rất vui khi được gặp em, anh <b>muốn làm em đỡ mệt</b>. Anh đã rất vui khi được nhìn thấy em cười và vui vẻ. Tối hôm đó cũng là lần đầu tiên anh <b>public mối quan hệ của anh với em.</b> ",
+            },
+            { 
+                image: "6d4ad05d-9cb1-43a6-82ee-ecfbc46761b1.jfif", 
+                date: "5/4",
+                message: "<b>Lần đầu tiên anh thấy em say</b>. anh cảm nhận được lúc đó <b>em cảm thấy đủ an toàn khi ở bên cạnh anh để thể hiện ra sự hồn nhiên của mình.</b>" 
+            },
+            { 
+                image: ["unnamed (10).jpg", "unnamed (22).jpg"], 
+                date: "7/4",
+                message: "<b>Lần đầu chúng mình cãi nhau.</b>",
+                isSad: true
+            },
+            { 
+                image: "3dc149da-d138-4d4d-87a1-4cdf17afebfe.jfif", 
+                date: "9/4",
+                message: "Em phải về sớm vì mẹ gọi, nhưng trước khi đi, em đã dạy anh ôm. <b>Cái ôm thật lâu, thật ấm, rồi nụ hôn nhẹ trên trán.</b> Đôi mắt em trong đêm ánh lên. Một nụ hôn vụng dại, nhẹ nhàng và thật sâu. Em nghe tim anh đập, còn anh... chỉ mong thời gian ngừng lại. Anh phát hiện ra anh đã làm rơi khuyên tai của em tối hôm đó (một kỷ niệm đáng nhớ :v)",
+                isSpecial: true
+            },
+            { 
+                image: "unnamed.png", 
+                date: "10/4",
+                message: "Sáng sớm, anh quay lại nơi cũ, tìm chiếc hoa tai em đánh rơi. Và anh tìm thấy – một nửa kỷ niệm đầu tiên của nụ hôn. <b>Mỗi người giữ một chiếc như giữ lại một vật kỷ niệm cho nụ hôn đầu.</b>",
+                isSpecial: true
+            },
+            { 
+                image: "unnamed1.jpg", 
+                date: "12/4",
+                message: "Một vòng hồ Tây với chiếc xe đạp, một ly tào phớ anh mua cho em. Chiều đón em tan học, rủ nhau ra công viên Cầu Giấy. <b>Những buổi chiều đơn giản nhưng đầy yêu thương.</b>" 
+            },
+            { 
+                image: ["c1756aa4-3617-431d-a00d-5d5ee5760a51.gif", "unnamed (21).jpg" ,"ce21e6b8-098e-482c-be76-0ec88a7eb0c0.jfif", "download.png"], 
+                date: "13/4",
+                message: "Hôm đó, tại quán cafe Ban Công trên phố cổ mà em thích, <b>chúng mình ngồi viết điều mình thích và muốn bỏ vào lọ sao.</b> Cùng nhau đọc, cùng nhau ăn tối, xem phim “Before Sunrise” – <b>em ngủ gật trên vai anh, còn anh chỉ muốn giữ em như thế mãi mãi.</b> Em luôn làm anh cảm thấy bất ngờ bởi sự sáng tạo và ngọt ngào của em.",
+                isSpecial: true
+            },
+            { 
+                image: ["Screenshot 2025-04-21 092333.png", "9f3ad046-ffd7-4a3c-8581-d7d1cb63efc4.jfif", ],
+                date: "15-4",
+                message: "Công viên gần nhà, kimbap, đua xe, đi bộ quanh khu phố sang trọng. <b>Em suýt nữa đã nằm lên đùi anh.</b> Anh và em cùng nhau trả lời 10 câu hỏi để hiểu nhau hơn. Những cái ôm, những nụ hôn... không dài, nhưng thấm mãi." 
+            },
+            { 
+                image: "unnamed (1).jpg", 
+                date: "18-4",
+                message: "Bữa sáng chuộc lỗi. Tối đó mưa, mình không lên được hồ Gươm. Nhưng lại có một quán cafe mèo, cùng nhau xem phim quả quýt <b>em tựa đầu lên vai anh – thật ấm áp và ngọt ngào, anh có thể ngồi như vậy mãi.</b>" 
+            },
+            { 
+                image: ["320f1301-f6f8-492f-97ce-764580b9b75f.gif", "b4d501cc-d4c3-4d3f-ba1a-b411230034fa.gif"], 
+                date: "20-4",
+                message: "Em có deadline, nhưng vẫn ráng hoàn thành sớm để gặp anh. Mì vằn thắn, kem Tràng Tiền, và những bước chân bên nhau quanh hồ Gươm. <b>Chỉ cần em còn nắm tay anh, anh sẽ luôn đi cùng em.</b>",
+                isSpecial: true
+            },
+            { 
+                image: "unnamed.jpg", 
+                date: "23-4",
+                message: "<b>Món quà đặc biệt e làm riêng cho anh.</b>",
+                isSpecial: true
+            },
+            { 
+                image: "unnamed6.jpg", 
+                date: "25-4",
+                message: "Một buổi tối tại quán cafe ngẫu nhiên mà chúng mình tìm thấy. Bên ngoài trời mưa to nhưng bên trong thật ấm áp và tràn đầy tiếng cười." 
+            },
+            { 
+                image: ["unnamed (11).jpg", "unnamed (19).jpg", "unnamed (20).jpg", "unnamed (25).jpg"], 
+                date: "26-4",
+                message: "Cùng em đi mua quà cho em gái em và những nguyên liệu cho tấm thiệp anh đang làm." 
+            },
+            { 
+                image: "unnamed7.jpg", 
+                date: "27-4",
+                message: "Đi ăn cùng em buổi trưa, tối chúng mình cùng đi dạo ở phố đi bộ, ăn cơm, ngồi nói chuyện trên quán cafe sân thượng. Luật về sớm bắt đầu có hiệu lực :v." 
+            },
+            { 
+                image: "download (1).png", 
+                date: "29-4",
+                message: "<b>Lần đầu anh làm em khóc.</b>",
+                isSad: true
+            },
+            { 
+                image: ["unnamed5.jpg","2d153a9a-8e17-4839-b5bc-6f5fa47f8754.gif", "6109bafd-5e79-498c-b530-d7092aba2760.gif"],
+                date: "1-5",
+                message: "<b>Buổi gặp nhau sau hôm đó. Một ngày nhiều cảm xúc.</b>" 
+            },
+            { 
+                image: "o4zeRCfW6EzZjMAEh9AgN1hJy2IZ2RcBQAMyUC~tplv-tej9nj120t-origin.jpg", 
+                date: "2-5",
+                message: "Đơn giản là một buổi chiều tại công viên, hai chiếc bánh ngọt và những câu chuyện nhỏ. Thật nhẹ nhàng và ấm áp." 
+            },
+            { 
+                image: ["unnamed4.jpg", "referenceSchemeHeadOfficeallowPlaceHoldertrueheight700ldapp-6.png", "5b9ade8a-cdc0-46fb-9db1-ff4c17482ab4.gif","9eeac91c-9c0f-4e74-a339-6c66d2d4f5f3.gif","a4ed7005-deca-4eac-897b-82a0282cfc4f.jfif", "unnamed (16).jpg"], 
+                date: "3-5",
+                message: "Một ngày em plan cho anh. Chúng mình đã cùng nhau đi xem phim Thunderbolts, lên phố cổ ăn tối và cafe, rồi cùng đi tour đêm Văn Miếu. Thật lâu rồi mới có cả một ngày được ở bên em." 
+            },
+            { 
+                image: ["unnamed (12).jpg", "2ade70f8-0747-4136-a461-48597570b852.jfif", "4f2f5de5-44f3-4840-940b-cb38b70faff6.jfif", "unnamed (18).jpg", "unnamed (17).jpg", "unnamed (14).jpg"], 
+                date: "4-5",
+                message: "<b>Our Special day ❤️.</b>",
+                isSpecial: true
+            },
+            { 
+                image: ["a69aaead-7a4a-426d-a9af-9a6c44b02c02_sVy6SM6n.gif", "unnamed (13).jpg", "unnamed (15).jpg", "Nhà-Thờ_Easy-Resize.com_.jpg"], 
+                date: "6-5",
+                message: "Chúng mình lên nhà thờ lớn. Em tặng anh món quà em mất nhiều công sức để làm, nó là một máy coupon. Trong đó chứa những việc chúng mình có thể làm cùng nhau cho đến những ý tưởng cho một ngày thú vị. Anh sẽ luôn trân trọng mọi món quà em tặng anh. Em nằm lên đùi anh tại một góc nhỏ trong quán cafe trong khi kể những câu chuyện và anh luồn tay qua mái tóc của em. Cảm giác thật tuyệt ❤️.",
+                isSpecial: true
+            },
+            { 
+                image: ["93d8eaf7-bb36-48bb-b688-f011be49a7ad.jfif"], 
+                date: "10-5",
+                message: "Một buổi hẹn thật ngắn. Chúng mình chỉ kịp cùng nhau ăn vặt và đi dạo quanh hồ cùng những câu chuyện nhỏ, anh còn chưa kip ôm em thì em đã phải về rồi." 
+            },
+            { 
+                image: ["8f2b865e-1ab5-458b-8f2c-e1562062b468.gif","25ae0c90-09ff-4454-b49b-ef62a625ee6d.jfif", "642d6102-b1ea-4d00-bbdd-4a8de3b98a86.jfif", "1dd8587f-67ff-4db8-a64e-f7ba5bd0f352.jfif"], 
+                date: "11-5",
+                message: "Đón em sau khi em đi học về, cùng nhau đi ăn tối (lẩu ếch >.<). Chúng mình cùng nhau đi cafe nằm và xem phim. Em đã ngủ một chút trong lòng anh. Ước gì được như vậy mãi ❤️.",
+                isSpecial: true 
+            },
+            { 
+                image: ["b66bcd3d-fd6d-43ff-8be7-06b09a17d0e0.gif", "d88028ba-8515-4025-95d7-b4523a183a16.jfif", "6edd4161-7a73-4c95-b1e3-097e00c6535d.jfif", "unnamed (27).jpg"], 
+                date: "13-5",
+                message: "Chúng mình cùng chơi boardgame tại quán cafe. Thời gian trôi qua thật nhanh, cảm giác thời gian ở bên em thật ngắn ngủi. Chúng mình ôm nhau thật chặt rồi phải đi về :<." 
+            },
+            { 
+                image: "unnamed (28).jpg", 
+                date: "15-5",
+                message: "Một buổi workdate cùng em, chúng mình đã cùng nhau làm việc và ăn tối tại quán cafe. Em thật đẹp khi ngồi làm việc." 
+            },
+            { 
+                image: ["unnamed (29).jpg", "unnamed (32).jpg" ],
+                date: "17-5",
+                message: "Buổi date trước khi anh đi Ninh Bình. Hum đó anh cùng em đi xem đồ điện tử tại siêu thị điện máy và em nói \"Không có nhà anh nhà em mà là nhà chúng ta\". Cảm giác chúng mình như một cặp đôi mới cưới đang sắm sửa cho tổ ấm vậy. Xong chúng mình ngồi tại quán cafe viết về các tính cách của em mà anh cảm nhận. Anh đã không kịp nghe bức thư của em vì phải về sớm.",
+                isSpecial: true
+            },
+            { 
+                image: ["unnamed (30).jpg", "unnamed (31).jpg"], 
+                date: "20-5",
+                message: "Em phải làm bài tập cho cuối tuần. Chúng mình cùng ngồi chơi cá ngựa. Anh không nhớ bảo em đọc cho anh nghe bức thư của :<. Buổi đầu gặp lại sau khi anh đi chơi, khi ở bên cạnh em, anh giường như quên đi sự mệt mỏi sau chuyến đi. Chúng mình ôm nhau thật lâu và thật chặt. Em bước đến và ôm anh thật chặt, cảm giác thật tuyệt." 
+            },
+            { 
+                image: ["unnamed (33).jpg", "cde2b1e6-4eef-41a9-88d1-5ef27e40067e.mp4.gif", "unnamed (35).jpg", "unnamed (34).jpg"], 
+                date: "22-5",
+                message: "Một buổi date nữa trước khi anh đi chơi, anh đã sử dụng coupon love letter và em đã viết tặng anh một bức thư thật đáng iu như con người em vậy. Chúng mình đã ôm nhau thật chặt thật lâu vì không muốn phải rời xa. Anh luôn ở trong trái tim em khi em còn nhớ về anh. Yêu em.",
+                isSpecial: true
+            },
+            { 
+                image: ["unnamed (36).jpg"], 
+                date: "27-5",
+                message: "Chúng mình đi ăn nầm nướng sau đó ra quán cafe ưu thích. Em kể anh nghe những câu chuyện nhưng trong lúc ôm em, anh đã hơi mơ màng chìm vào giấc ngủ :v nhưng vẫn nghe câu chuyện của em.",
+            },
+            { 
+                image: ["1708761b-0494-4bdf-a5ee-a5e1b3932071.jfif", "1772371d-24b0-4ad6-965d-20e14e027696.gif"], 
+                date: "29-5",
+                message: "Em vừa bận việc nhà cửa vừa bị ốm, anh thương nhắm. Một ngày mùa thu giữa mùa hè của Hà Nội, chúng mình cùng đi ăn và xem phim lilo and stitch. Anh được ôm em thật lâu.",
+            },
+        ];
+
+        // Create cards
+        const cardGrid = document.querySelector('.card-grid');
+        
+        cardData.forEach((card, index) => {
+            const cardElement = document.createElement('div');
+            if(card.isSpecial) {
+                cardElement.className = 'card special'
+            } else if (card.isSad) {
+                cardElement.className = 'card sad'
+            } else {
+                cardElement.className = 'card'
+            }
+            
+            // Check if card.image is an array or a single string
+            let frontContent = '';
+            if (Array.isArray(card.image) && card.image.length > 1) {
+                // Create slideshow for multiple images
+                frontContent = `
+                    <div class="slideshow-container" data-card-index="${index}">
+                        ${card.image.map((img, imgIndex) => `
+                            <div class="slideshow-slide ${imgIndex === 0 ? 'active' : ''}" data-slide-index="${imgIndex}">
+                                <img src="./assets/img/${img}" alt="Love Memory ${index + 1}-${imgIndex + 1}">
+                            </div>
+                        `).join('')}
+                        <div class="slideshow-controls">
+                            ${card.image.map((_, dotIndex) => `
+                                <div class="slideshow-dot ${dotIndex === 0 ? 'active' : ''}" data-slide-index="${dotIndex}"></div>
+                            `).join('')}
+                        </div>
+                        <button class="slideshow-btn slideshow-prev" data-card-index="${index}">&lt;</button>
+                        <button class="slideshow-btn slideshow-next" data-card-index="${index}">&gt;</button>
+                    </div>
+                `;
+            } else {
+                // Single image display
+                const imgSrc = Array.isArray(card.image) ? card.image[0] : card.image;
+                frontContent = `<img src="./assets/img/${imgSrc}" alt="Love Card ${index + 1}">`;
+            }
+            
+            cardElement.innerHTML = `
+                <div class="card-inner">
+                    <div class="card-front">
+                        ${frontContent}
+                    </div>
+                    <div class="card-back">
+                        <div class="card-header">${card.date}</div>
+                        <div class="card-divider"></div>
+                        <div class="card-message">
+                            <p>${card.message}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            cardGrid.appendChild(cardElement);
+            
+            // Add flip functionality
+            cardElement.addEventListener('click', function(e) {
+                // Don't flip if clicking on slideshow controls
+                if (e.target.closest('.slideshow-btn') || e.target.closest('.slideshow-dot')) {
+                    e.stopPropagation();
+                    return;
+                }
+                
+                this.classList.toggle('flipped');
+                // Create more hearts for special cards
+                const heartCount = card.isSpecial ? 30 : 20;
+                createHeartRain(heartCount);
+            });
+        });
+
+        // Add slideshow functionality
+        function setupSlideshows() {
+            // Set up next/prev buttons
+            document.querySelectorAll('.slideshow-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const cardIndex = this.getAttribute('data-card-index');
+                    const container = document.querySelector(`.slideshow-container[data-card-index="${cardIndex}"]`);
+                    if (!container) return;
+                    
+                    const slides = container.querySelectorAll('.slideshow-slide');
+                    const dots = container.querySelectorAll('.slideshow-dot');
+                    
+                    // Find current active slide
+                    let currentIndex = 0;
+                    slides.forEach((slide, idx) => {
+                        if (slide.classList.contains('active')) {
+                            currentIndex = idx;
+                        }
+                    });
+                    
+                    // Calculate new index
+                    let newIndex;
+                    if (this.classList.contains('slideshow-next')) {
+                        newIndex = (currentIndex + 1) % slides.length;
+                    } else {
+                        newIndex = (currentIndex - 1 + slides.length) % slides.length;
+                    }
+                    
+                    // Update active slide and dot
+                    slides[currentIndex].classList.remove('active');
+                    dots[currentIndex].classList.remove('active');
+                    slides[newIndex].classList.add('active');
+                    dots[newIndex].classList.add('active');
+                    
+                    createHeartRain(5); // Create a few hearts on slide change
+                });
+            });
+            
+            // Set up dots
+            document.querySelectorAll('.slideshow-dot').forEach(dot => {
+                dot.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const slideIndex = this.getAttribute('data-slide-index');
+                    const container = this.closest('.slideshow-container');
+                    const slides = container.querySelectorAll('.slideshow-slide');
+                    const dots = container.querySelectorAll('.slideshow-dot');
+                    
+                    // Remove active class from all slides and dots
+                    slides.forEach(slide => slide.classList.remove('active'));
+                    dots.forEach(dot => dot.classList.remove('active'));
+                    
+                    // Add active class to selected slide and dot
+                    slides[slideIndex].classList.add('active');
+                    this.classList.add('active');
+                    
+                    createHeartRain(5); // Create a few hearts on slide change
+                });
+            });
+            
+            // Auto-advance slideshows
+            const slideshows = document.querySelectorAll('.slideshow-container');
+            slideshows.forEach(slideshow => {
+                const cardIndex = slideshow.getAttribute('data-card-index');
+                setInterval(() => {
+                    // Only auto-advance if the card is not flipped
+                    const card = slideshow.closest('.card');
+                    if (!card.classList.contains('flipped')) {
+                        const nextBtn = slideshow.querySelector('.slideshow-next');
+                        if (nextBtn) nextBtn.click();
+                    }
+                }, 2500 + (cardIndex * 400)); // Stagger the timers slightly
+            });
+        }
+
+        // Call setup after creating cards
+        setupSlideshows();
+
+        // Function to create falling hearts
+        function createHeart(className = 'heart') {
+            const heart = document.createElement('div');
+            heart.className = className;
+            heart.innerHTML = '❤';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.top = '-50px'; // Start above the viewport
+            heart.style.animationDuration = Math.random() * 3 + 2 + 's';
+            heart.style.fontSize = Math.random() * 24 + 10 + 'px';
+            heart.style.opacity = Math.random() * 0.5 + 0.5;
+            document.body.appendChild(heart);
+            
+            // Remove heart after animation completes
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+            
+            return heart;
+        }
+
+        // Create falling hearts on click
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.card') || e.target.closest('.picture-frame') || e.target.closest('.music-controls') || e.target.closest('.slideshow-btn') || e.target.closest('.slideshow-dot')) {
+                // Don't create hearts for card/frame/control clicks as they have their own hearts
+                return;
+            }
+            const heart = createHeart();
+            heart.style.left = e.clientX + 'px';
+            heart.style.top = e.clientY + 'px';
+        });
+
+        // Function to create a rain of hearts
+        function createHeartRain(count, className = 'heart') {
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    createHeart(className);
+                }, i * 50);
+            }
+        }
+
+        // Global variable to store interval
+        let heartRainInterval;
+
+        // Function to continuously create hearts
+        function createContinuousHeartRain() {
+            // Create 1-3 hearts every interval
+            const heartCount = Math.floor(Math.random() * 3) + 1;
+            for (let i = 0; i < heartCount; i++) {
+                createHeart();
+            }
+        }
+
+        // Initial heart rain when page loads
+        window.addEventListener('load', () => {
+            // Initial burst of hearts
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const heart = createHeart('initial-heart');
+                    heart.style.left = Math.random() * 100 + 'vw';
+                }, i * 50);
+            }
+
+            // Start continuous heart rain that never stops
+            heartRainInterval = setInterval(createContinuousHeartRain, 400);
+
+            // Try to play music automatically
+            const bgMusic = document.getElementById('bgMusic');
+            bgMusic.volume = 0.3;
+            const playPromise = bgMusic.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log("Autoplay prevented: ", error);
+                });
+            }
+        });
+
+        // Keep hearts falling even when tab is inactive
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                // If interval was cleared, restart it
+                if (!heartRainInterval) {
+                    heartRainInterval = setInterval(createContinuousHeartRain, 400);
+                }
+            }
+        });
+
+        // Music controls
+        document.getElementById('playMusic').addEventListener('click', () => {
+            const bgMusic = document.getElementById('bgMusic');
+            const button = document.getElementById('playMusic');
+            
+            if (bgMusic.muted) {
+                bgMusic.muted = false;
+                button.innerHTML = '🔊'; // Music note symbol for unmuted
+            } else {
+                bgMusic.muted = true;
+                button.innerHTML = '🔇'; // Different symbol for muted
+            }
+        });
+        
+        // Add interaction to side pictures
+        const pictures = document.querySelectorAll('.picture-frame');
+        pictures.forEach(picture => {
+            picture.addEventListener('click', () => {
+                createHeartRain(15);
+            });
+        });
+
+        // Make sure side pictures are positioned properly on window resize
+        window.addEventListener('resize', () => {
+            const sidePictures = document.querySelectorAll('.side-pictures');
+            if (window.innerWidth <= 1400) {
+                sidePictures.forEach(div => {
+                    div.style.position = 'static';
+                    div.style.transform = 'none';
+                });
+            } else {
+                const leftPics = document.querySelector('.side-pictures.left');
+                const rightPics = document.querySelector('.side-pictures.right');
+                
+                leftPics.style.position = 'fixed';
+                leftPics.style.transform = 'translateY(-50%)';
+                
+                rightPics.style.position = 'fixed';
+                rightPics.style.transform = 'translateY(-50%)';
+            }
+        });
+    </script>
+</body>
+</html>
