@@ -128,8 +128,12 @@
             filter: blur(2px);
         }
 
+        .card.special {
+            --special-icon: '⭐';
+        }
+
         .card.special::after {
-            content: '⭐';
+            content: var(--special-icon);
             position: absolute;
             top: -15px;
             right: -10px;
@@ -960,7 +964,20 @@
                 date: "29-5",
                 message: "Em vừa bận việc nhà cửa vừa bị ốm, anh thương nhắm. Một ngày mùa thu giữa mùa hè của Hà Nội, chúng mình cùng đi ăn và xem phim lilo and stitch. Anh được ôm em thật lâu.",
             },
+            { 
+                image: ["ecb7bc5b-9cab-470a-9331-87e3d9ba2e89.jfif", "be45bf62-d61d-4210-82d4-a632dd95a63d.jfif", "b0902d7f-11db-41d6-b3b3-f2f1e61c6984.jfif", "a4a31f7e-4076-4475-853f-e647374d4012.jfif"], 
+                date: "5-6",
+                message: "Gặp lại em sau 1 tuần xa cách. Anh nhớ em nhiều lắm, thiếu em cảm giác cuộc sống vẫn tiếp tục thời gian vẫn chạy nhưng sao với anh cảm giác thật buồn, thật thiếu vắng. Anh đã chuẩn bị một món quà bất ngờ cho em, anh đã định dùng để tặng em vào ngày kỉ niệm 100 ngày quen nhau nhưng anh đã quyết định tặng em luôn vào ngày hôm đó.",
+            },
+            { 
+                image: ["de81f3e6-6b8d-4082-ba7e-59707c380842.jfif", "4d1f7bf9-bd46-4436-a13e-d0e20eca01c9.jfif", "Screenshot 2025-06-08 123015.png", "226b23ea-a759-4165-9662-d3c465eacc8d.jfif", "37fd0b2a-f27d-4854-aa52-2ef8d9f5d774.jfif", "63e62cc2-2288-46cb-b53a-526f5c430baa.jfif", "99f5ad73-9eda-4f87-93b5-62bf86ef005d.jfif", "d090aaa1-7905-4c13-8c17-d3a58dad806a.jfif", "6450032a-74f4-4b98-8467-20b2d8e58b41.jfif", "06ff118a-87a9-4626-8015-a664abd6b3ab.gif"], 
+                date: "7-6",
+                message: "Ngày kỉ niệm 100 ngày quen nhau. Chúng mình đã đi workshop làm gốm, cùng nhau làm một cái bát thật đẹp. Dù có lúc hơi bất đồng nhưng vẫn phối hợp rất ăn ý. Sau đó chúng mình đi ăn ốc rồi ngồi nói chuyện. Thời gian trôi thật nhanh khi chúng mình bên nhau còn nhiều hoạt động trong plan còn chưa làm được. Chúng mình đã ở bên nhau 100 ngày và sẽ còn tiếp tục ở bên nhau ❤️",
+                isSpecial: true
+            },
         ];
+
+        
 
         // Create cards
         const cardGrid = document.querySelector('.card-grid');
@@ -969,6 +986,9 @@
             const cardElement = document.createElement('div');
             if(card.isSpecial) {
                 cardElement.className = 'card special'
+                if (card.date === "7-6") {
+                    cardElement.style.setProperty('--special-icon', "'💯'");
+                }
             } else if (card.isSad) {
                 cardElement.className = 'card sad'
             } else {
