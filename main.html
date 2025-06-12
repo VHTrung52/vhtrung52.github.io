@@ -167,7 +167,7 @@
             right: -10px;
             font-size: 35px;
             z-index: 10;
-            animation: sad-sparkle 3s ease-in-out infinite;
+            animation: sad-sparkle 4s ease-in-out infinite;
             text-shadow: 0 0 10px rgba(31, 30, 25, 0.8);
         }
 
@@ -199,7 +199,18 @@
                 opacity: 1;
             }
             50% {
-                transform: scale(1.1) rotate(2deg);
+                transform: scale(1.2) rotate(5deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes heart-sparkle {
+            0%, 100% {
+                transform: scale(0.9) rotate(-15deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2) rotate(15deg);
                 opacity: 1;
             }
         }
@@ -977,6 +988,11 @@
                 message: "Ngày kỉ niệm 100 ngày quen nhau. Chúng mình đã đi workshop làm gốm, cùng nhau làm một cái bát thật đẹp. Dù có lúc hơi bất đồng nhưng vẫn phối hợp rất ăn ý. Sau đó chúng mình đi ăn ốc rồi ngồi nói chuyện. Thời gian trôi thật nhanh khi chúng mình bên nhau còn nhiều hoạt động trong plan còn chưa làm được. Chúng mình đã ở bên nhau 100 ngày và sẽ còn tiếp tục ở bên nhau ❤️",
                 isSpecial: true
             },
+            { 
+                image: ["899b0fb1-82a9-4a23-b3a4-171f4b52c12a.jfif", "bb4b3272-793e-4a67-8ec3-cea36369bae3.gif", "unnamed (41).jpg"], 
+                date: "11-6",
+                message: "8h tối, sau cơn mưa như trút nước, một buổi tối mát mẻ hiếm hoi của mùa hè, chúng mình đều đói và quyết định ăn tối tại nhà hàng Thái. Đồ ăn thật ngon. Chúng mình đi hóng gió một lúc trước khi quay về quán cafe Cộng gần nhà, đồ uống hông ngon nhưng chúng mình ngồi cùng nhau. Chúng mình um nhau thiệt lâu, những cái um thiệt chặt, những nụ hun thật mềm ❤️. Anh yêu em.",
+            },
         ];
 
         
@@ -991,11 +1007,11 @@
                 if (card.date === "4-5" || card.date === "9/4") {
                     cardElement.style.setProperty('--special-icon', "'❤️'");
                     cardElement.style.setProperty('--font-size', "35px");
-                    cardElement.style.setProperty ('--animation', "sad-sparkle 3s ease-in-out infinite");
+                    cardElement.style.setProperty ('--animation', "heart-sparkle 3s ease-in-out infinite");
                 } else if (card.date === "7-6") {
                     cardElement.style.setProperty('--special-icon', "'💯'");
                     cardElement.style.setProperty('--font-size', "35px");
-                    cardElement.style.setProperty('--animation', "sad-sparkle 3s ease-in-out infinite");
+                    cardElement.style.setProperty('--animation', "heart-sparkle 3s ease-in-out infinite");
                 } else if (card.date === "6-5" || card.date === "22-5") {
                     cardElement.style.setProperty('--special-icon', "'🎟️'");
                     cardElement.style.setProperty('--font-size', "35px");
