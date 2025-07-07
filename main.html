@@ -1053,7 +1053,7 @@
         // Create cards
         const cardGrid = document.querySelector('.card-grid');
         
-        cardData.forEach((card, index) => {
+        cardData.reverse().forEach((card, index) => {
             const cardElement = document.createElement('div');
             if(card.isSpecial) {
                 cardElement.className = 'card special'
