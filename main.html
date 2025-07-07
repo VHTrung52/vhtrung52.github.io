@@ -587,20 +587,22 @@
 
         .rainbow-hue {
             background: linear-gradient(45deg, 
-                hsl(0, 100%, 50%), hsl(60, 100%, 50%), hsl(120, 100%, 50%), 
-                hsl(180, 100%, 50%), hsl(240, 100%, 50%), hsl(300, 100%, 50%)
+                #8B0000, #FF4500, #DAA520, #038b03, 
+                #aa52e9, #ee05ee
             );
+            background-size: 400% 400%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             font-weight: bold;
             text-decoration: underline;
-            animation: hue-rotate 4s linear infinite;
+            animation: rainbow 3s ease-in-out infinite;
         }
 
-        @keyframes hue-rotate {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
     </style>
 </head>
