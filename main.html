@@ -699,13 +699,13 @@
                 month: '2-digit',
                 year: 'numeric'
             });
-            document.getElementById('todayDate').innerHTML = `<span style="text-decoration: underline;">${todayDate}</span>`;
+            document.getElementById('todayDate').innerHTML = `<span>${todayDate}</span>`;
             
             const dateAmount = daysSince("2025-02-27");
-            document.getElementById('daysCounter').innerHTML = `<span style="text-decoration: underline;">${dateAmount}</span>`;
+            document.getElementById('daysCounter').innerHTML = `<span>${dateAmount}</span>`;
 
             const dateAmountSpecial = daysSince("2025-05-04");
-            document.getElementById('daysCounterSpecial').innerHTML = `<span style="text-decoration: underline;">${dateAmountSpecial}</span>`;
+            document.getElementById('daysCounterSpecial').innerHTML = `<span>${dateAmountSpecial}</span>`;
             
             // Initialize music
             initializeMusic();
