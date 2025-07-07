@@ -584,6 +584,24 @@
                 font-size: 28px;
             }
         }
+
+        .rainbow-hue {
+            background: linear-gradient(45deg, 
+                hsl(0, 100%, 50%), hsl(60, 100%, 50%), hsl(120, 100%, 50%), 
+                hsl(180, 100%, 50%), hsl(240, 100%, 50%), hsl(300, 100%, 50%)
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+            text-decoration: underline;
+            animation: hue-rotate 4s linear infinite;
+        }
+
+        @keyframes hue-rotate {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -593,7 +611,7 @@
     </div>
 
     <div class="container">
-        <h1 class="title"><span id="todayDate"></span> <br> We've Shared <span id="daysCounter"></span> Beautiful Days Together <br> Here is just a few of our memory📸</h1>
+        <h1 class="title"><span id="todayDate"></span> <br> We've Shared <span id="daysCounter" class="rainbow-hue"></span> Beautiful Days Together ☀️<br> <span id="daysCounterSpecial" class="rainbow-hue"></span> Since Our Special Days ♥️<br> Here is just a few of our memory📸</h1>
 
         <!-- Left side pictures -->
         <div class="side-pictures left">
@@ -621,7 +639,7 @@
             </div>
         </div>
 
-        <h1 class="title">I love you, my sweet little sunshine🔆 <br> Lets Make More Memory Together </h1>
+        <h1 class="title">I love you, my sweet little sunshine☀️ <br> Lets Make More Memory Together </h1>
         	
         <button id="logoutButton" class="logout-btn">Logout</button>
 
@@ -674,6 +692,9 @@
             
             const dateAmount = daysSince("2025-02-27");
             document.getElementById('daysCounter').innerHTML = `<span style="text-decoration: underline;">${dateAmount}</span>`;
+
+            const dateAmountSpecial = daysSince("2025-05-04");
+            document.getElementById('daysCounterSpecial').innerHTML = `<span style="text-decoration: underline;">${dateAmountSpecial}</span>`;
             
             // Initialize music
             initializeMusic();
@@ -999,14 +1020,30 @@
                 message: "Một ngày mưa gió, chúng mình quyết định đi bằng taxi thay vì xe máy. Hôm đó chúng mình đi xem phim bí kíp luyện rồng tại vincom metropolis sau đó vào muji ngắm nghía đồ cho căn nhà mới của em. Bữa tối chúng mình ăn Pepper Lunch. Anh phải về sớm vì đi chơi ngày hôm sau tối đó chúng mình hông um nhau được lâu. "
             },
             { 
-                image: [], 
+                image: ["11aa471c-0c55-476b-a512-7a95f9180a3b.jfif", "hanam-57-1731334039121.jpg"], 
                 date: "27-6",
-                message: "Bức ảnh anh đầu to. Hum đó chúng mình đi ăn miến lươn, anh được ăn đĩa miến lươn thạch sanh :v. Sau đó chúng mình trải nghiệm một quán cafe mới Treebee coffe, quán cafe như một khu rừng thu nhỏ với thác nước và một cái hồ nhỏ ở giữa. Em gối đầu lên đùi anh cảm giác thiệt là hạnh phúc."
+                message: "Bức ảnh anh đầu to :v. Hum đó chúng mình đi ăn miến lươn, anh được ăn đĩa miến lươn thạch sanh :v. Sau đó chúng mình trải nghiệm một quán cafe mới Treebee coffe, quán cafe như một khu rừng thu nhỏ với thác nước và một cái hồ nhỏ ở giữa. Em gối đầu lên đùi anh cảm giác thiệt là hạnh phúc."
             },
             { 
                 image: ["5f1b3fc4-b277-4b0f-97c7-174ed4331838.jfif"], 
                 date: "29-6",
-                message: "TT-TT",
+                message: "Ngày em khóc TT-TT.",
+                isSad: true
+            },
+            {
+                image: ["c9b7d43b-4f98-4757-8aef-d14441ab85eb.jfif"],
+                date: "1-7",
+                message: "Một ngày mưa to, anh muốn um em vào lòng sau ngày em bùn, chúng mình đi ăn và anh đã um em thật chặt và thật lâu.",
+            },
+            {
+                image: ["d4c2fc7f-8cc2-4dac-876e-7ad07124db5b.jfif", "e62281ed-8ff4-4dec-a181-aadbe340f574.jfif"],
+                date: "5-7",
+                message: "Chúng mình thay đổi timeline, đón em về chúng mình đi ăn luôn. Ăn tối tại một quán ăn phong cách Hàn Quốc, chúng mình ăn gà rán và mì tương đen. Trời nóng qué, chúng mình lên hồ Tây vào quán cafe ăn binsu và nói những câu chuyện trong khi em nằm trên đùi anh.",
+            },
+                        {
+                image: ["20250417_233332.jpg"],
+                date: "6-7",
+                message: "The day i cry.",
                 isSad: true
             },
         ];
