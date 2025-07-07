@@ -78,8 +78,6 @@
         .title {
             color: #d81b60;
             text-align: center;
-            margin-top: 50px;
-            margin-bottom: 40px;
             font-size: 36px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
@@ -604,6 +602,14 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
+
+        .demo-section {
+            margin: 30px 0;
+            padding: 0px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body>
@@ -613,7 +619,7 @@
     </div>
 
     <div class="container">
-        <h1 class="title"><span id="todayDate"></span> <br> We've Shared <span id="daysCounter" class="rainbow-hue"></span> Beautiful Days Together ☀️<br> <span id="daysCounterSpecial" class="rainbow-hue"></span> Since Our Special Days ♥️<br> Here is just a few of our memory📸</h1>
+        <h1 class="title"><span id="todayDate" class="rainbow-hue"></span> <br> We've Shared <span id="daysCounter" class="rainbow-hue"></span> Beautiful Days Together ☀️<br> <span id="daysCounterSpecial" class="rainbow-hue"></span> Since Our Special Days ♥️<br> Here is a few of our memory📸</h1>
 
         <!-- Left side pictures -->
         <div class="side-pictures left">
@@ -641,7 +647,9 @@
             </div>
         </div>
 
-        <h1 class="title">I love you, my sweet little sunshine☀️ <br> Lets Make More Memory Together </h1>
+        <div class="demo-section">
+            <h1 class="title">I love you♥️, my sweet little sunshine☀️ </h1>
+        </div>
         	
         <button id="logoutButton" class="logout-btn">Logout</button>
 
