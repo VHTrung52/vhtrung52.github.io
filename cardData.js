@@ -258,7 +258,7 @@ const cardData = [
         isSad: true
     },
     {
-        image: ["0b196f8c-4143-4eda-bb3d-1641d41d680d.gif", "d223f3d7-8cbe-4be5-b37a-dd470b2b00c2.jfif", "e1ac4fb5-d080-4afe-9b76-a698ec89ef6c.jfif", "1488e4b5-93ff-4237-b237-a27ff594a8cf.jfif","8bef75bb-25af-4316-9138-3c9b4ad2b2cf.jfif","6027de3d-fa3b-4fd9-996d-ad08226f0d26.jfif","c01cc2c4-9ec9-43b7-80e2-6f609b5e1a0c.jfif"],
+        image: ["0b196f8c-4143-4eda-bb3d-1641d41d680d.gif", "d223f3d7-8cbe-4be5-b37a-dd470b2b00c2.jfif", "e1ac4fb5-d080-4afe-9b76-a698ec89ef6c.jfif", "1488e4b5-93ff-4237-b237-a27ff594a8cf.jfif","8bef75bb-25af-4316-9138-3c9b4ad2b2cf.jfif","6027de3d-fa3b-4fd9-996d-ad08226f0d26.jfif","c01cc2c4-9ec9-43b7-80e2-6f609b5e1a0c.jfif", "f036a2b6-d33b-4d87-8809-c4899f0e286c.jfif"],
         date: "13/7",
         message: "Một ngày anh mong đợi rất lâu, ngày mà chúng mình cùng nhau đi shopping và cùng nấu ăn. Thực đơn bữa tối là mỳ sốt kem nấm cùng với steak và salad. Một bữa tối thiệt ngon và cùng nhiều kỉ niệm trong căn nhà mới của em, sau đó chúng mình chơi đất nặn với ý tưởng là gà và vịt cùng một chiếc bánh xinh xắn mừng em về nhà mới :v. Anh đã ngủ quên trong lúc um em vào lòng. Anh yêu em.",
         isSpecial: true
