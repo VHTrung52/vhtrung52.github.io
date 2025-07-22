@@ -263,4 +263,14 @@ const cardData = [
         message: "Một ngày anh mong đợi rất lâu, ngày mà chúng mình cùng nhau đi shopping và cùng nấu ăn. Thực đơn bữa tối là mỳ sốt kem nấm cùng với steak và salad. Một bữa tối thiệt ngon và cùng nhiều kỉ niệm trong căn nhà mới của em, sau đó chúng mình chơi đất nặn với ý tưởng là gà và vịt cùng một chiếc bánh xinh xắn mừng em về nhà mới :v. Anh đã ngủ quên trong lúc um em vào lòng. Anh yêu em.",
         isSpecial: true
     },
+    {
+        image: ["the-gioi-khung-long-tai-sinh-19171-thumb.jpg", "cb3e734e-0920-4230-804f-a32c8932bb189m84xn24.jpg"],
+        date: "15/7",
+        message: "Chúng mình mua phở xào về ăn và sau đó đi xem phim Thế Giới Khủng Long, bộ phim nhìu sạn :v, cả 2 ngồi bình phẩm bộ phim từ đầu đến cuối."
+    },
+    {
+        image: ["fca6ec71-19f0-4ae5-88c7-2487689ff932.jfif", "b7733726-df86-45c2-bb23-3b164136684c.jfif"],
+        date: "18/7",
+        message: "Chúng mình đi ăn tối tại một quán Hàn ở Kim Mã, trời nóng thiệt, chúng mình quyết định về nhà em chơi, và um nhau thiệt chặt, thì thầm với em, anh yêu em. "
+    },
 ];
