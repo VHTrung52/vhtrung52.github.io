@@ -273,4 +273,25 @@ const cardData = [
         date: "18/7",
         message: "Chúng mình đi ăn tối tại một quán Hàn ở Kim Mã, trời nóng thiệt, chúng mình quyết định về nhà em chơi, và um nhau thiệt chặt, thì thầm với em, anh yêu em. "
     },
+    {
+        image: ["a1d790ce-f54f-4320-8ff5-dd62e66f3a19.jfif", "0e45863e-e69c-483a-b591-f60fa74649fa.jfif", "20250725_220640.jpg"],
+        date: "25/7",
+        message: "",
+    },
+    {
+        image: ["8b8123f4-08ed-4023-85b0-4588dc988de7.jfif", "20250727_224553.jpg"],
+        date: "27/7",
+        message: "",
+    },
+    {
+        image: [],
+        date: "31/7",
+        message: "",
+    },
+    {
+        image: ["20250417_233332.jpg"],
+        date: "1/8",
+        message: "",
+        isSad: true
+    },
 ];
